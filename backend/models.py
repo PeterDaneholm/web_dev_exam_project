@@ -8,7 +8,7 @@ class User(Base):
     username = Column(String(50), unique=True)
     role = Column(String(50), default='user')
     email_address = Column(String(100), unique=True)
-    password = Column(String(100), )
+    password = Column(String(100))
     first_name = Column(String(50))
     last_name = Column(String(50))
 
@@ -44,6 +44,6 @@ class Review(Base):
     product_id = Column(Integer, ForeignKey('product.id'))
     reviewer_id = Column(Integer, ForeignKey('users.id'))
     rating = Column(Integer)
-    comment = Column(String)
+    comment = Column(String(1000))
     date = Column(Date)
     
