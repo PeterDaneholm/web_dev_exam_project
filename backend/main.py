@@ -31,15 +31,34 @@ class UserBase(BaseModel):
     password: str
     role: str
 
+class UpdateUser(UserBase):
+    id: int = None
+    email_address: str = None
+    username: str = None
+    first_name: str = None
+    last_name: str = None
+    password: str = None
+    role: str = 'user'
+
 class ProductBase(BaseModel):
     id: int
     name: str
     price: float
     description: str
     on_sale: bool
-    stock_quantiy: int
+    stock_quantity: int
     category_id: str
-    user_rating: float
+    #user_rating: float
+
+class UpdateProduct(ProductBase):
+    id: int = None
+    name: str = None
+    price: float = None
+    description: str = None
+    on_sale: bool = None
+    stock_quantity: int = None
+    category_id: str = None
+    #user_rating: float = None
 
 
 def get_db():
@@ -67,6 +86,9 @@ async def create_user(user: UserBase, db: db_dependency):
 @app.get("/users/", response_model=List[UserBase])
 async def get_users(db:db_dependency):
     db_users = db.query(models.User).filter(models.User.role == 'user').all()
+    if db_users is None:
+        raise HTTPException(status_code=404, detail="Users could not be found")
+
     return db_users
 
 #Get specific user
@@ -75,11 +97,23 @@ async def get_user(user_id: int, db: db_dependency):
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
+
     return db_user
 
 #Update User
 @app.put("/users/{user_id}", status_code=status.HTTP_200_OK)
+async def update_user(user_id: int, user: UpdateUser, db: db_dependency):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User with id: {user_id} not found")    
 
+    for field, value in user.model_dump(exclude_unset=True).items():
+        setattr(db_user, field, value)
+
+    db.commit()
+    db.refresh(db_user)
+
+    return db_user
 
 #Delete user
 @app.delete("/users/{id}", status_code=status.HTTP_200_OK)
@@ -87,6 +121,7 @@ async def delete_user(id: int, db: db_dependency):
     db_id = db.query(models.User).filter(models.User.id == id).first() 
     if db_id is None:
         raise HTTPException(status_code=404, detail="User not found")
+
     db.delete(db_id)
     db.commit()
 
@@ -103,6 +138,9 @@ async def create_product(product: ProductBase, db: db_dependency):
 @app.get("/products/", response_model=List[ProductBase])
 async def get_products(db: db_dependency):
     db_products = db.query(models.Product).all()
+    if db_products is None:
+        raise HTTPException(status_code=404, detail="Products could not be found")
+        
     return db_products
 
 #Get specific Product
@@ -115,7 +153,18 @@ async def get_product(product_id: int, db: db_dependency):
 
 #Update Product
 @app.put("/products/{product_id}", status_code=status.HTTP_200_OK)
+async def update_product(product_id: int, product: UpdateProduct, db: db_dependency):
+    db_product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    if db_product is None:
+        raise HTTPException(status_code=404, detail="Product is not found")
+    
+    for field, value in product.model_dump(exclude_unset=True).items():
+        setattr(db_product, field, value)
+    
+    db.commit()
+    db.refresh(db_product)
 
+    return db_product
 
 #Delete Product
 @app.delete("/products/{product_id}", status_code=status.HTTP_200_OK)
@@ -123,6 +172,7 @@ async def delete_product(product_id: int, db: db_dependency):
     db_product = db.query(models.Product).filter(models.Product.id == product_id).first()
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")
+    
     db.delete(db_product)
     db.commit()
 

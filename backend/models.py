@@ -23,7 +23,7 @@ class Product(Base):
     on_sale = Column(Boolean, default=False)
     stock_quantity = Column(Integer)
     category_id = Column(String(50))
-    user_rating = (Float)
+    #user_rating = (Float(1))
 
 
 class Order(Base):
