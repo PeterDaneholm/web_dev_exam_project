@@ -8,7 +8,7 @@ function App() {
   const [users, setUsers] = useState([])
 
   useEffect(() => {
-    const fetchUsers = async() => {
+    const fetchUsers = async () => {
       const response = await api.get('/users/');
       console.log(response)
       setUsers(response.data)
@@ -18,9 +18,9 @@ function App() {
 
   return (
     <>
-    <h1>Hello there</h1>
+      <h1>Hello there</h1>
       <div className='grid h-screen'>
-      <SignUpForm />
+        <SignUpForm />
       </div>
     </>
   )

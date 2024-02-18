@@ -22,11 +22,6 @@ app.add_middleware(
 
 models.Base.metadata.create_all(bind=engine)
 
-class PostBase(BaseModel):
-    title: str
-    content: str
-    user_id: int
-
 class UserBase(BaseModel):
     id: int
     username:str
@@ -35,6 +30,16 @@ class UserBase(BaseModel):
     last_name: str
     password: str
     role: str
+
+class ProductBase(BaseModel):
+    id: int
+    name: str
+    price: float
+    description: str
+    on_sale: bool
+    stock_quantiy: int
+    category_id: str
+    user_rating: float
 
 
 def get_db():
@@ -72,6 +77,10 @@ async def get_user(user_id: int, db: db_dependency):
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
+#Update User
+@app.put("/users/{user_id}", status_code=status.HTTP_200_OK)
+
+
 #Delete user
 @app.delete("/users/{id}", status_code=status.HTTP_200_OK)
 async def delete_user(id: int, db: db_dependency):
@@ -80,3 +89,43 @@ async def delete_user(id: int, db: db_dependency):
         raise HTTPException(status_code=404, detail="User not found")
     db.delete(db_id)
     db.commit()
+
+
+#PRODUCT ROUTES
+#Create Product
+@app.post("/products/", status_code=status.HTTP_201_CREATED)
+async def create_product(product: ProductBase, db: db_dependency):
+    new_product = models.Product(**product.model_dump())
+    db.add(new_product)
+    db.commit()
+
+#Get all Products
+@app.get("/products/", response_model=List[ProductBase])
+async def get_products(db: db_dependency):
+    db_products = db.query(models.Product).all()
+    return db_products
+
+#Get specific Product
+@app.get("/products/{product_id}", status_code=status.HTTP_200_OK)
+async def get_product(product_id: int, db: db_dependency):
+    db_product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    if db_product is None:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return db_product
+
+#Update Product
+@app.put("/products/{product_id}", status_code=status.HTTP_200_OK)
+
+
+#Delete Product
+@app.delete("/products/{product_id}", status_code=status.HTTP_200_OK)
+async def delete_product(product_id: int, db: db_dependency):
+    db_product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    if db_product is None:
+        raise HTTPException(status_code=404, detail="Product not found")
+    db.delete(db_product)
+    db.commit()
+
+
+#ORDER ROUTES
+
