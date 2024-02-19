@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated, List
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
+from datetime import date
 from database import engine, SessionLocal
 import models
 
@@ -60,6 +61,13 @@ class UpdateProduct(ProductBase):
     category_id: str = None
     #user_rating: float = None
 
+class OrderBase(BaseModel):
+    id: int
+    product_id: int
+    quantity: int
+    customer: int
+    order_date: date
+    total: float
 
 def get_db():
     db = SessionLocal()
@@ -178,4 +186,32 @@ async def delete_product(product_id: int, db: db_dependency):
 
 
 #ORDER ROUTES
+#Create new Order
+@app.post("/orders/", status_code=status.HTTP_200_OK)
+async def create_order(order: OrderBase, db: db_dependency):
+    new_order = models.Order(**order.model_dump())
+    db.add(new_order)
+    db.commit()
+    return new_order
 
+#Get all Orders
+@app.get("/orders/", response_model=List[OrderBase])
+async def get_orders(db: db_dependency):
+    db_orders = db.query(models.Order).all()
+    if db_orders is None:
+        raise HTTPException(status_code=404, detail="Could not find any orders")
+
+    return db_orders
+
+#Get specific Order
+@app.get("/orders/{order_id}", status_code=status.HTTP_200_OK)
+async def get_order(order_id: int, db: db_dependency):
+    db_order = db.query(models.Order).filter(models.Order.id == order_id).first()
+    if db_order is None:
+        raise HTTPException(status_code=404, detail="Could not find order with id: {order_id}")
+    
+    return db_order
+
+#Update Order??
+
+#Delete Order??
