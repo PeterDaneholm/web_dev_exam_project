@@ -24,7 +24,7 @@ app.add_middleware(
 models.Base.metadata.create_all(bind=engine)
 
 class UserBase(BaseModel):
-    id: int
+    id: str
     username:str
     email_address: str
     first_name: str
@@ -33,7 +33,7 @@ class UserBase(BaseModel):
     role: str
 
 class UpdateUser(UserBase):
-    id: int = None
+    id: str = None
     email_address: str = None
     username: str = None
     first_name: str = None
@@ -42,7 +42,7 @@ class UpdateUser(UserBase):
     role: str = 'user'
 
 class ProductBase(BaseModel):
-    id: int
+    id: str
     name: str
     price: float
     description: str
@@ -52,7 +52,7 @@ class ProductBase(BaseModel):
     #user_rating: float
 
 class UpdateProduct(ProductBase):
-    id: int = None
+    id: str = None
     name: str = None
     price: float = None
     description: str = None
@@ -62,7 +62,7 @@ class UpdateProduct(ProductBase):
     #user_rating: float = None
 
 class OrderBase(BaseModel):
-    id: int
+    id: str
     product_id: int
     quantity: int
     customer: int
@@ -101,7 +101,7 @@ async def get_users(db:db_dependency):
 
 #Get specific user
 @app.get("/users/{user_id}", status_code=status.HTTP_200_OK)
-async def get_user(user_id: int, db: db_dependency):
+async def get_user(user_id: str, db: db_dependency):
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -110,7 +110,7 @@ async def get_user(user_id: int, db: db_dependency):
 
 #Update User
 @app.put("/users/{user_id}", status_code=status.HTTP_200_OK)
-async def update_user(user_id: int, user: UpdateUser, db: db_dependency):
+async def update_user(user_id: str, user: UpdateUser, db: db_dependency):
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User with id: {user_id} not found")    
@@ -125,7 +125,7 @@ async def update_user(user_id: int, user: UpdateUser, db: db_dependency):
 
 #Delete user
 @app.delete("/users/{id}", status_code=status.HTTP_200_OK)
-async def delete_user(id: int, db: db_dependency):
+async def delete_user(id: str, db: db_dependency):
     db_id = db.query(models.User).filter(models.User.id == id).first() 
     if db_id is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -153,7 +153,7 @@ async def get_products(db: db_dependency):
 
 #Get specific Product
 @app.get("/products/{product_id}", status_code=status.HTTP_200_OK)
-async def get_product(product_id: int, db: db_dependency):
+async def get_product(product_id: str, db: db_dependency):
     db_product = db.query(models.Product).filter(models.Product.id == product_id).first()
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -161,7 +161,7 @@ async def get_product(product_id: int, db: db_dependency):
 
 #Update Product
 @app.put("/products/{product_id}", status_code=status.HTTP_200_OK)
-async def update_product(product_id: int, product: UpdateProduct, db: db_dependency):
+async def update_product(product_id: str, product: UpdateProduct, db: db_dependency):
     db_product = db.query(models.Product).filter(models.Product.id == product_id).first()
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product is not found")
@@ -176,7 +176,7 @@ async def update_product(product_id: int, product: UpdateProduct, db: db_depende
 
 #Delete Product
 @app.delete("/products/{product_id}", status_code=status.HTTP_200_OK)
-async def delete_product(product_id: int, db: db_dependency):
+async def delete_product(product_id: str, db: db_dependency):
     db_product = db.query(models.Product).filter(models.Product.id == product_id).first()
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -205,7 +205,7 @@ async def get_orders(db: db_dependency):
 
 #Get specific Order
 @app.get("/orders/{order_id}", status_code=status.HTTP_200_OK)
-async def get_order(order_id: int, db: db_dependency):
+async def get_order(order_id: str, db: db_dependency):
     db_order = db.query(models.Order).filter(models.Order.id == order_id).first()
     if db_order is None:
         raise HTTPException(status_code=404, detail="Could not find order with id: {order_id}")

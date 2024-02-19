@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const SignUpForm = () => {
   const [formData, setFormData] = useState({
-    id: uuidv4,
+    id: uuidv4(),
     username: '',
     first_name: '',
     last_name: '',

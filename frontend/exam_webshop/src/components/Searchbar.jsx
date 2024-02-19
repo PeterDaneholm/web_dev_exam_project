@@ -1,6 +1,8 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import api from '../api'
+
+
 const Searchbar = () => {
     const [products, setProducts] = useState([])
     const [search, setSearch] = useState('')
@@ -17,10 +19,7 @@ const Searchbar = () => {
         setSearch(e.target.value)
     }
 
-    console.log("Products: ", products)
-
     const filterSearch = products.filter(prod => {
-        console.log("prod: ", prod)
         return prod.name.toLowerCase().includes(search.toLowerCase())
             || prod.category_id.toLowerCase().includes(search.toLowerCase())
     })
