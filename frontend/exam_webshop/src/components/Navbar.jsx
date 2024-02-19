@@ -1,12 +1,17 @@
 import React from 'react'
 import { FaRegUserCircle } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
+import Searchbar from './Searchbar';
 
 
 const Navbar = () => {
     return (
         <div className='absolute bg-orange-100 h-20 w-full flex flex-row'>
-            <h1 className='my-4 ml-4 text-2xl w-[70%]'>WebShop Name</h1>
+            <h1 className='my-4 ml-4 text-2xl w-[30%]'>WebShop Name</h1>
+
+            <div className='w-[40%] h-full'>
+                <Searchbar />
+            </div>
 
             <div className='flex flex-row justify-evenly w-[30%] float-end items-center'>
                 <FaRegUserCircle />
