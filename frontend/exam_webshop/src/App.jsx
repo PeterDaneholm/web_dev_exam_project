@@ -4,6 +4,7 @@ import api from './api'
 import Navbar from './components/Navbar';
 import LoginForm from './components/LoginForm';
 //import './App.css'
+import { Outlet } from 'react-router-dom';
 
 
 function App() {
@@ -22,8 +23,7 @@ function App() {
     <>
       <Navbar />
       <div className='grid h-screen'>
-        <SignUpForm />
-        <LoginForm />
+        <Outlet />
       </div>
     </>
   )

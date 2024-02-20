@@ -7,14 +7,18 @@ import Root from './routes/root.jsx'
 import Errorpage from './Errorpage.jsx'
 import Login from './routes/Login.jsx'
 import Signup from './routes/Signup.jsx'
+import Profile from './routes/Profile.jsx'
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
+    element: <App />,
     errorElement: <Errorpage />,
     children: [
-      {}
+      {
+        path: "/profile/:username",
+        element: <Profile />
+      }
     ]
   },
   {

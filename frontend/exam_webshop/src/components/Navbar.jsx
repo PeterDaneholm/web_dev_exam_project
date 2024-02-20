@@ -1,22 +1,32 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { FaRegUserCircle } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
-import Searchbar from './Searchbar';
 import { Link } from 'react-router-dom';
 
 
 const Navbar = () => {
+    const [profileOpen, setProfileOpen] = useState(false)
+    const [productCartOpen, setProductCartOpen] = useState(false)
+
+    console.log(productCartOpen, profileOpen)
     return (
         <div className='absolute bg-orange-100 h-20 w-full flex flex-row'>
-            <h1 className='my-4 ml-4 text-2xl w-[30%]'>WebShop Name</h1>
+            <Link to={'/'}>
+                <h1 className='my-4 ml-4 text-2xl w-[30%]'>WebShop Name</h1>
+            </Link>
 
-            <div className='w-[40%] h-full'>
-                <Searchbar />
-            </div>
+
 
             <div className='flex flex-row justify-evenly w-[30%] float-end items-center'>
-                <FaRegUserCircle />
-                <FaCartShopping />
+                <button onClick={() => setProfileOpen(!profileOpen)}>
+                    <FaRegUserCircle />
+                </button>
+                {profileOpen ? '' : ''}
+
+                <button onClick={() => setProductCartOpen(!productCartOpen)}>
+                    <FaCartShopping />
+                </button>
+                {productCartOpen ? '' : ''}
             </div>
         </div>
     )
