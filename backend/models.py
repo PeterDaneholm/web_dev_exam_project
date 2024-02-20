@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, String, Float, Date, ForeignKey, VARCHAR
+from sqlalchemy import Boolean, Column, Integer, String, Float, Date, ForeignKey, VARCHAR, BLOB
 from database import Base
 import uuid
 
@@ -24,6 +24,7 @@ class Product(Base):
     on_sale = Column(Boolean, default=False)
     stock_quantity = Column(Integer)
     category_id = Column(String(50))
+    #image_id = 
     #user_rating = (Float(1))
 
 

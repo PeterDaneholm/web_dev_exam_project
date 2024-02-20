@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import SignUpForm from './components/SignUpForm'
 import api from './api'
 import Navbar from './components/Navbar';
-import Login from './components/Login';
+import LoginForm from './components/LoginForm';
 //import './App.css'
 
 
@@ -23,7 +23,7 @@ function App() {
       <Navbar />
       <div className='grid h-screen'>
         <SignUpForm />
-        <Login />
+        <LoginForm />
       </div>
     </>
   )

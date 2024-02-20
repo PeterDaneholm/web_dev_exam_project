@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import api from '../api'
 
-const Login = () => {
+const LoginForm = () => {
     const [login, setLogin] = useState({
         username: '',
         password: '',
@@ -43,4 +43,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default LoginForm
