@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import SignUpForm from './components/SignUpForm'
 import api from './api'
 import Navbar from './components/Navbar';
-import LoginForm from './components/LoginForm';
 //import './App.css'
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
+import HomePage from './components/HomePage';
+
 
 
 function App() {

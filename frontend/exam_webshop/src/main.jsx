@@ -2,12 +2,13 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
-import { createBrowserRouter, Router, RouterProvider } from 'react-router-dom'
-import Root from './routes/root.jsx'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Errorpage from './Errorpage.jsx'
 import Login from './routes/Login.jsx'
 import Signup from './routes/Signup.jsx'
 import Profile from './routes/Profile.jsx'
+import Product from './routes/Product.jsx'
+import ProductsPage from './routes/ProductsPage.jsx'
 
 const router = createBrowserRouter([
   {
@@ -16,9 +17,25 @@ const router = createBrowserRouter([
     errorElement: <Errorpage />,
     children: [
       {
+        path: "/products",
+        element: <ProductsPage />
+      },
+      {
+        path: "/products/:id",
+        element: <Product />
+      },
+      {
         path: "/profile/:username",
         element: <Profile />
-      }
+      },
+      {
+        path: "/profile/:username",
+        element: <Profile />
+      },
+      {
+        path: "/product/:id",
+        element: <Product />,
+      },
     ]
   },
   {
