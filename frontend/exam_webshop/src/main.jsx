@@ -7,8 +7,9 @@ import Errorpage from './Errorpage.jsx'
 import Login from './routes/Login.jsx'
 import Signup from './routes/Signup.jsx'
 import Profile from './routes/Profile.jsx'
-import Product from './routes/Product.jsx'
 import ProductsPage from './routes/ProductsPage.jsx'
+import ProductPage from './routes/ProductPage.jsx'
+import Admin from './routes/Admin.jsx'
 
 const router = createBrowserRouter([
   {
@@ -22,7 +23,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/products/:id",
-        element: <Product />
+        element: <ProductPage />
       },
       {
         path: "/profile/:username",
@@ -31,10 +32,6 @@ const router = createBrowserRouter([
       {
         path: "/profile/:username",
         element: <Profile />
-      },
-      {
-        path: "/product/:id",
-        element: <Product />,
       },
     ]
   },
@@ -45,6 +42,10 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <Signup />
+  },
+  {
+    path: "/admin",
+    element: <Admin />
   }
 ])
 
