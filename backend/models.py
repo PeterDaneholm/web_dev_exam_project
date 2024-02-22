@@ -1,6 +1,18 @@
-from sqlalchemy import Boolean, Column, Integer, String, Float, Date, ForeignKey, VARCHAR, BLOB
+from sqlalchemy import Boolean, Column, Integer, String, Float, Date, ForeignKey, VARCHAR, BLOB, Enum
+from sqlalchemy.orm import Mapped, relationship, mapped_column
 from database import Base
+from enum import Enum as PythonEnum
 import uuid
+
+class CategoryEnum(PythonEnum):
+    BASEBALL = 'baseball'
+    JACKET = 'jacket'
+    SUIT = 'suit'
+    SPORTCLOTHES = 'sportclothes'
+    SHOES = 'shoes'
+    ACCESORIES = 'accesories'
+    SPORTEQUIPMENT = 'sportequipment'
+
 
 class User(Base):
     __tablename__ = 'users'
@@ -12,6 +24,7 @@ class User(Base):
     password = Column(String(100))
     first_name = Column(String(50))
     last_name = Column(String(50))
+    orders = relationship('Order', backref='user')
 
 
 class Product(Base):
@@ -23,9 +36,10 @@ class Product(Base):
     description = Column(String(200))
     on_sale = Column(Boolean, default=False)
     stock_quantity = Column(Integer)
-    category_id = Column(String(50))
+    category_id = Column(Enum(CategoryEnum), nullable=False)
     #image_id = 
     #user_rating = (Float(1))
+    reviews = relationship('Review', backref='review')
 
 
 class Order(Base):
@@ -34,7 +48,7 @@ class Order(Base):
     id = Column(VARCHAR(36), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     quantity = Column(Integer)
     product_id = Column(VARCHAR(36), ForeignKey('product.id'))
-    customer = Column(VARCHAR(36), ForeignKey('users.id'))
+    user_id = Column(VARCHAR(36), ForeignKey('users.id'))
     order_date = Column(Date)
     total = Column(Float)
 

@@ -89,6 +89,7 @@ async def create_user(user: UserBase, db: db_dependency):
     db_user = models.User(**user.model_dump())
     db.add(db_user)
     db.commit()
+    return db_user
 
 #Get all users
 @app.get("/users/", response_model=List[UserBase])
