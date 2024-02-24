@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
 import api from '../api'
+import { redirect } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const LoginForm = () => {
     const [login, setLogin] = useState({
         username: '',
         password: '',
     })
+    const navigate = useNavigate()
 
     const handleChange = (e) => {
         setLogin((prev) => {
@@ -18,8 +21,17 @@ const LoginForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-/*         const response = await api.post("/login");
- */    }
+        const response = await api.post("/login", login, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        console.log("Login repsonse", response)
+        if (response.status === 200) {
+            navigate("/products");
+        }
+    }
+
 
     return (
         <div className='flex rounded-md w-4/5 h-auto flex-col text-center gap-2 bg-gray-300 p-2 m-2 justify-self-center self-center'>

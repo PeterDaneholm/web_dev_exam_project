@@ -1,9 +1,12 @@
 import React from 'react'
 import api from '../api'
 import { useState, useEffect } from 'react'
+import { v4 as uuidv4 } from 'uuid'
+
 
 const SignUpForm = () => {
   const [formData, setFormData] = useState({
+    id: uuidv4(),
     username: '',
     first_name: '',
     last_name: '',
@@ -24,7 +27,7 @@ const SignUpForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     console.log("Form Data: ", formData)
-    await api.post("/users", formData)
+    await api.post("/register", formData)
     setFormData({
       username: '',
       first_name: '',

@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from datetime import date, timedelta
 from database import engine, SessionLocal
 import models
-from auth import get_current_user, authenticate_user, create_access_token, Token
+from auth import get_current_user, authenticate_user, create_access_token, Token, oath2_scheme
 from database import db_dependency
 from passlib.context import CryptContext
 
@@ -26,6 +26,7 @@ app.add_middleware(
 )
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+token_blacklist = set()
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -81,9 +82,11 @@ async def root():
     return {"message": "hello world"}
 
 #LOGIN
-@app.post("/login")
+@app.post("/login/")
 async def create_access_from_login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency) -> Token:
+    print(form_data)
     user = authenticate_user(db, form_data.username, form_data.password)
+    print(user)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"})
     access_token_expires = timedelta(minutes=60)
@@ -91,10 +94,20 @@ async def create_access_from_login(form_data: Annotated[OAuth2PasswordRequestFor
     return Token(acces_token=access_token, token_type="bearer")
 
 
+#LOGOUT
+@app.post("/logout/")
+async def logout(token: str = Depends(oath2_scheme)):
+    token_blacklist.add(token)
+    return {"detail": "Logout successful"}
+
+
 #USER ROUTES
 #Create user
-@app.post("/users/", status_code=status.HTTP_201_CREATED)
+@app.post("/register/", status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserBase, db: db_dependency):
+    existing_user = db.query(models.User).filter(models.User.username == user.username).first()
+    if existing_user:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already exists")
     hashed_password = pwd_context.hash(user.password)
     #user_dict = models.User(**user.model_dump())
     user_dict = user.dict(by_alias=True)
