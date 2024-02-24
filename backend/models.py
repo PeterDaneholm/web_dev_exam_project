@@ -1,5 +1,5 @@
 from sqlalchemy import Boolean, Column, Integer, String, Float, Date, ForeignKey, VARCHAR, BLOB, Enum
-from sqlalchemy.orm import Mapped, relationship, mapped_column
+from sqlalchemy.orm import relationship
 from database import Base
 from enum import Enum as PythonEnum
 import uuid

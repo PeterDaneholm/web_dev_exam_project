@@ -1,11 +1,15 @@
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, status, Security
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import Annotated, List
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from datetime import date
+from datetime import date, timedelta
 from database import engine, SessionLocal
 import models
+from auth import get_current_user, authenticate_user, create_access_token, Token
+from database import db_dependency
+from passlib.context import CryptContext
 
 app = FastAPI()
 
@@ -20,6 +24,8 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*']
 )
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -69,31 +75,38 @@ class OrderBase(BaseModel):
     order_date: date
     total: float
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-db_dependency = Annotated[Session, Depends(get_db)]
 
 @app.get("/")
 async def root():
     return {"message": "hello world"}
 
+#LOGIN
+@app.post("/login")
+async def create_access_from_login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency) -> Token:
+    user = authenticate_user(db, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"})
+    access_token_expires = timedelta(minutes=60)
+    access_token = create_access_token(data={"sub": user.username, "scopes": form_data.scopes}, expires_delta=access_token_expires)
+    return Token(acces_token=access_token, token_type="bearer")
+
+
 #USER ROUTES
 #Create user
 @app.post("/users/", status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserBase, db: db_dependency):
-    db_user = models.User(**user.model_dump())
+    hashed_password = pwd_context.hash(user.password)
+    #user_dict = models.User(**user.model_dump())
+    user_dict = user.dict(by_alias=True)
+    user_dict["password"]  = hashed_password
+    db_user = models.User(**user_dict)
     db.add(db_user)
     db.commit()
     return db_user
 
 #Get all users
 @app.get("/users/", response_model=List[UserBase])
-async def get_users(db:db_dependency):
+async def get_users(db:db_dependency, current_user: Annotated[UserBase, Security(get_current_user, scopes=["admin"])]):
     db_users = db.query(models.User).filter(models.User.role == 'user').all()
     if db_users is None:
         raise HTTPException(status_code=404, detail="Users could not be found")
