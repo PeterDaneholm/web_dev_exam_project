@@ -84,13 +84,12 @@ async def root():
 #LOGIN
 @app.post("/login/")
 async def create_access_from_login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency) -> Token:
-    print(form_data)
     user = authenticate_user(db, form_data.username, form_data.password)
-    print(user)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"})
     access_token_expires = timedelta(minutes=60)
-    access_token = create_access_token(data={"sub": user.username, "scopes": form_data.scopes}, expires_delta=access_token_expires)
+    access_token = create_access_token(data={"sub": user.username, "scopes": user.role}, expires_delta=access_token_expires)
+    print(access_token)
     return Token(acces_token=access_token, token_type="bearer")
 
 

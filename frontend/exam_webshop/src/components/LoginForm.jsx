@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import api from '../api'
-import { redirect } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
+import Cookies from 'js-cookie'
 
 const LoginForm = () => {
     const [login, setLogin] = useState({
@@ -28,6 +28,7 @@ const LoginForm = () => {
         });
         console.log("Login repsonse", response)
         if (response.status === 200) {
+            Cookies.set('token', response.data, { secure: true })
             navigate("/products");
         }
     }
