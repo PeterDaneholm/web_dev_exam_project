@@ -23,7 +23,7 @@ class UserInDB(User):
     hashed_password: Mapped[str] = Column(String(100))
 
 class Token(BaseModel):
-    acces_token: str
+    access_token: str
     token_type: str
 
 class TokenData(BaseModel):

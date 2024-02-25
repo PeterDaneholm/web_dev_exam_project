@@ -10,6 +10,29 @@ import Profile from './routes/Profile.jsx'
 import ProductsPage from './routes/ProductsPage.jsx'
 import ProductPage from './routes/ProductPage.jsx'
 import Admin from './routes/Admin.jsx'
+import AdminProduct from './routes/AdminProduct.jsx'
+import { useNavigate } from 'react-router-dom'
+import Cookies from 'js-cookie'
+import { jwtDecode } from 'jwt-decode'
+
+const ProtectedRoute = ({ children, scopes }) => {
+  const navigate = useNavigate()
+  const token = Cookies.get('token');
+
+  if (!token) {
+    navigate("/login")
+    return null
+  }
+
+  const decodedToken = jwtDecode(token);
+
+  if (!scopes.some(scope => decodedToken.scopes.includes(scope))) {
+    navigate("/error");
+    return null
+  }
+
+  return children;
+}
 
 const router = createBrowserRouter([
   {
@@ -45,7 +68,21 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <Admin />
+    element: (
+      <ProtectedRoute scopes={['admin']}>
+        <Admin />
+      </ProtectedRoute>
+    ),
+    childen: [
+      {
+        path: "/uploadproduct",
+        element: (
+          <ProtectedRoute scopes={['admin']}>
+            <AdminProduct />
+          </ProtectedRoute>
+        )
+      },
+    ]
   }
 ])
 
