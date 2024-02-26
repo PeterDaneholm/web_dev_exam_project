@@ -56,6 +56,14 @@ const router = createBrowserRouter([
         path: "/profile/:username",
         element: <Profile />
       },
+      {
+        path: "/uploadproduct",
+        element: <AdminProduct />/* (
+          <ProtectedRoute scopes={['admin']}>
+            <AdminProduct />
+          </ProtectedRoute>
+        ) */
+      },
     ]
   },
   {
@@ -68,19 +76,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: (
+    element: <Admin />/* (
       <ProtectedRoute scopes={['admin']}>
         <Admin />
       </ProtectedRoute>
-    ),
+    ) */,
     childen: [
       {
         path: "/uploadproduct",
-        element: (
+        element: <AdminProduct />/* (
           <ProtectedRoute scopes={['admin']}>
             <AdminProduct />
           </ProtectedRoute>
-        )
+        ) */
       },
     ]
   }

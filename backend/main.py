@@ -48,13 +48,17 @@ class UpdateUser(UserBase):
     password: str = None
     role: str = 'user'
 
+class ProductSize(BaseModel):
+    size: str
+    quantity: int
+
 class ProductBase(BaseModel):
     id: str
     name: str
     price: float
     description: str
-    on_sale: bool
-    stock_quantity: int
+    on_sale: bool = False
+    size: List[ProductSize] = None
     category_id: str
     #user_rating: float
 
@@ -64,15 +68,15 @@ class UpdateProduct(ProductBase):
     price: float = None
     description: str = None
     on_sale: bool = None
-    stock_quantity: int = None
+    size: str = None
     category_id: str = None
     #user_rating: float = None
 
 class OrderBase(BaseModel):
     id: str
-    product_id: int
+    product_id: str
     quantity: int
-    customer: int
+    customer: str
     order_date: date
     total: float
 
@@ -164,9 +168,15 @@ async def delete_user(id: str, db: db_dependency):
 #Create Product
 @app.post("/products/", status_code=status.HTTP_201_CREATED)
 async def create_product(product: ProductBase, db: db_dependency):
-    new_product = models.Product(**product.model_dump())
+    print(product)
+    product_data = product.dict(by_alias=True)
+    sizes = product_data.pop('size')
+    size_instance = [models.ProductSize(**size) for size in sizes]
+    new_product = models.Product(**product_data, size=size_instance)
+    #new_product = models.Product(**product.model_dump())
     db.add(new_product)
     db.commit()
+    return new_product
 
 #Get all Products
 @app.get("/products/", response_model=List[ProductBase])

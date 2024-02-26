@@ -13,6 +13,13 @@ class CategoryEnum(PythonEnum):
     ACCESORIES = 'accesories'
     SPORTEQUIPMENT = 'sportequipment'
 
+class ProductSize(Base):
+    __tablename__ = "productsize"
+    id = Column(VARCHAR(36), primary_key=True, default=uuid.uuid4, index=True)
+    size = Column(String(10), index=True)
+    quantity = Column(Integer)
+    product_id = Column(VARCHAR(36), ForeignKey('product.id'))
+
 
 class User(Base):
     __tablename__ = 'users'
@@ -24,7 +31,7 @@ class User(Base):
     password = Column(String(100))
     first_name = Column(String(50))
     last_name = Column(String(50))
-    orders = relationship('Order', backref='user')
+    orders = relationship('Order', backref='users')
 
 
 class Product(Base):
@@ -33,13 +40,13 @@ class Product(Base):
     id = Column(VARCHAR(36), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     name = Column(String(100), unique=True)
     price = Column(Float)
-    description = Column(String(200))
+    description = Column(String(400))
     on_sale = Column(Boolean, default=False)
-    stock_quantity = Column(Integer)
     category_id = Column(Enum(CategoryEnum), nullable=False)
     #image_id = 
     #user_rating = (Float(1))
-    reviews = relationship('Review', backref='review')
+    size = relationship('ProductSize', backref='productsize')
+    reviews = relationship('Review', backref='reviews')
 
 
 class Order(Base):
