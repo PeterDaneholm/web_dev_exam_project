@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from datetime import date, timedelta
 from database import engine, SessionLocal
 import models
-from auth import get_current_user, authenticate_user, create_access_token, Token, oath2_scheme
+from auth import get_current_user, get_admin_user, authenticate_user, create_access_token, Token, oath2_scheme
 from database import db_dependency
 from passlib.context import CryptContext
 
@@ -167,7 +167,9 @@ async def delete_user(id: str, db: db_dependency):
 #PRODUCT ROUTES
 #Create Product
 @app.post("/products/", status_code=status.HTTP_201_CREATED)
-async def create_product(product: ProductBase, db: db_dependency):
+async def create_product(product: ProductBase, 
+                         db: db_dependency
+                         ):
     print(product)
     product_data = product.dict(by_alias=True)
     sizes = product_data.pop('size')

@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import api from '../api'
 import { useNavigate } from 'react-router-dom'
+import { v4 as uuidv4 } from 'uuid'
+import Cookies from 'js-cookie'
+
 
 const AdminProduct = () => {
     const [newProduct, setNewProduct] = useState({
@@ -39,7 +42,26 @@ const AdminProduct = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await api.post("/products")
+        const token = Cookies.get('token')
+        let formData = { ...newProduct, id: uuidv4(), on_sale: false }
+        if (formData.price) {
+            formData.price = parseInt(formData.price)
+        }
+        console.log("Product data", formData)
+        if (formData.size) {
+            formData.size = formData.size.map((item) => {
+                return {
+                    ...item,
+                    quantity: parseInt(size.quantity)
+                }
+            })
+        }
+        console.log("Product data to request", formData)
+        const response = await api.post("/products", formData, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
         console.log("Response: ", response)
         navigate("/admin")
     }
@@ -64,7 +86,7 @@ const AdminProduct = () => {
                 <input type="text" name='size' onChange={handleSizeChange} value={size.size} />
 
                 <label htmlFor="quantity">Quantity of Product</label>
-                <input type="text" name='quantity' onChange={handleSizeChange} value={size.quantity} />
+                <input type="number" name='quantity' onChange={handleSizeChange} value={size.quantity} />
 
                 <button>Submit</button>
             </form>

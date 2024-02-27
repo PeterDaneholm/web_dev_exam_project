@@ -49,16 +49,18 @@ def authenticate_user(db, username:str, password: str):
         return False
     return user
 
-def get_current_user(
+async def get_current_user(
         db,
         security_scopes: SecurityScopes,
         token: Annotated[str, Depends(oath2_scheme)]
     ):
+    print(security_scopes)
     if security_scopes.scopes:
         authenticate_value = f"Bearer scope='{security_scopes.scope_str}'"
     else:
         authenticate_value = "Bearer"
     credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials", headers={"WWW-Authenticate": "Bearer"})
+    print("token" + token)
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
@@ -68,16 +70,19 @@ def get_current_user(
         token_data = TokenData(token_scopes=token_scopes, username=username)
     except (JWTError, ValidationError):
         raise credentials_exception
-    
+    print("decoded" + token_data)
     user = get_user(db, username=token_data.username)
     if user is None:
         raise credentials_exception
-    
+    print(user)
     for scope in security_scopes.scopes:
         if scope not in token_data.scopes:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not allowed", headers={"WWW-Authenticate": authenticate_value})
     
     return user
+
+async def get_admin_user(admin_user: Annotated[User, Security(get_current_user, scopes=["Admin"])]):
+    return admin_user
 
 
 def create_access_token(data:dict, expires_delta: timedelta | None = None):
