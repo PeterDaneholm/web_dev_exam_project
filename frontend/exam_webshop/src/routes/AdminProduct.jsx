@@ -43,12 +43,11 @@ const AdminProduct = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const token = Cookies.get('token')
+        console.log("token", token)
         let formData = { ...newProduct, id: uuidv4(), on_sale: false }
         if (formData.price) {
             formData.price = parseInt(formData.price)
         }
-        console.log("Product data", formData)
-        console.log("Size info", formData.size)
         if (formData.size) {
             formData.size = formData.size.map((item) => {
                 return {

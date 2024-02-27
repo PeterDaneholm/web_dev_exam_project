@@ -168,7 +168,7 @@ async def delete_user(id: str, db: db_dependency):
 #Create Product
 @app.post("/products/", status_code=status.HTTP_201_CREATED)
 async def create_product(product: ProductBase, 
-                         db: db_dependency
+                         db: db_dependency,
                          ):
     print(product)
     product_data = product.dict(by_alias=True)
