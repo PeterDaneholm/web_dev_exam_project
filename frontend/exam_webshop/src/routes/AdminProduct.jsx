@@ -35,7 +35,7 @@ const AdminProduct = () => {
     }
 
     const addSize = () => {
-        setNewProduct({ ...newProduct, size: size })
+        setNewProduct({ ...newProduct, size: [...newProduct.size, size] })
         console.log(newProduct)
         setSize({ size: "", quantity: 0 })
     }
@@ -48,6 +48,7 @@ const AdminProduct = () => {
             formData.price = parseInt(formData.price)
         }
         console.log("Product data", formData)
+        console.log("Size info", formData.size)
         if (formData.size) {
             formData.size = formData.size.map((item) => {
                 return {
