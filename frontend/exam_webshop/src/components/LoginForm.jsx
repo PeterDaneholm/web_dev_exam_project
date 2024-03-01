@@ -30,7 +30,7 @@ const LoginForm = () => {
         console.log("Login repsonse", response)
         if (response.status === 200) {
             console.log(response.data)
-            Cookies.set('token', response.data.access_token, { secure: true })
+            //Cookies.set('token', response.data.access_token, { secure: true })
             navigate("/products");
         }
     }

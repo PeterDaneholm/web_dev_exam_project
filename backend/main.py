@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends, status, Security
+from fastapi import FastAPI, HTTPException, Depends, status, Security, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import Annotated, List
@@ -87,21 +87,29 @@ async def root():
 
 #LOGIN
 @app.post("/login/")
-async def create_access_from_login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency) -> Token:
+async def create_access_from_login(response: Response, 
+                                   form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency) -> Token:
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"})
     access_token_expires = timedelta(minutes=60)
     access_token = create_access_token(data={"sub": user.username, "scopes": user.role}, expires_delta=access_token_expires)
+    response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True)
     print(access_token)
+    
     return Token(access_token=access_token, token_type="bearer")
 
 
 #LOGOUT
-@app.post("/logout/")
-async def logout(token: str = Depends(oath2_scheme)):
-    token_blacklist.add(token)
-    return {"detail": "Logout successful"}
+#@app.post("/logout/")
+#async def logout(token: str = Depends(oath2_scheme)):
+#    token_blacklist.add(token)
+#    return {"detail": "Logout successful"}
+
+@app.post("/logout")
+async def logout(response: Response ):
+    response.delete_cookie("access_token")
+    return {"status": "success"}
 
 
 #USER ROUTES
@@ -122,7 +130,7 @@ async def create_user(user: UserBase, db: db_dependency):
 
 #Get all users
 @app.get("/users/", response_model=List[UserBase])
-async def get_users(db:db_dependency, current_user: Annotated[UserBase, Security(get_current_user, scopes=["admin"])]):
+async def get_users(db:db_dependency, current_user: Annotated[UserBase, Security(get_current_user, scopes=["Admin"])]):
     db_users = db.query(models.User).filter(models.User.role == 'user').all()
     if db_users is None:
         raise HTTPException(status_code=404, detail="Users could not be found")
@@ -169,6 +177,7 @@ async def delete_user(id: str, db: db_dependency):
 @app.post("/products/", status_code=status.HTTP_201_CREATED)
 async def create_product(product: ProductBase, 
                          db: db_dependency,
+                         current_user: Annotated[UserBase, Security(get_current_user, scopes=["Admin"])]
                          ):
     print(product)
     product_data = product.dict(by_alias=True)

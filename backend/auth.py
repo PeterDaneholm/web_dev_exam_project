@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, status, Security
+from fastapi import Depends, HTTPException, status, Security, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, SecurityScopes
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -49,10 +49,17 @@ def authenticate_user(db, username:str, password: str):
         return False
     return user
 
+async def get_token_from_cookie(request: Request):
+    token = request.cookies.get("token")
+    if not token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not authenticate")
+    print(token)
+    return token
+
 async def get_current_user(
         db,
         security_scopes: SecurityScopes,
-        token: Annotated[str, Depends(oath2_scheme)]
+        token: Annotated[str, Depends(get_token_from_cookie)]
     ):
     print(security_scopes)
     if security_scopes.scopes:
@@ -60,7 +67,7 @@ async def get_current_user(
     else:
         authenticate_value = "Bearer"
     credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials", headers={"WWW-Authenticate": "Bearer"})
-    print("token" + token)
+    print(token)
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")

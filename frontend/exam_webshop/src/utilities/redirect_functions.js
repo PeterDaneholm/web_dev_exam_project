@@ -11,7 +11,7 @@ export default function alreadyLogin(navigate) {
     const decoded = jwtDecode(token)
     console.log("Already logged in, redirecting")
 
-    if (decoded.scopes == "Admin") {
+    if (decoded.scopes === "Admin") {
         navigate("/admin")
     } else {
         navigate("/products")

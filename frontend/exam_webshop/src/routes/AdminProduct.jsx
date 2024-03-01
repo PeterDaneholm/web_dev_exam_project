@@ -11,7 +11,7 @@ const AdminProduct = () => {
         description: "",
         size: [],
         price: 0,
-        category: "",
+        category_id: "",
     })
     const [size, setSize] = useState({ size: "", quantity: 0 })
     const navigate = useNavigate()
@@ -52,7 +52,7 @@ const AdminProduct = () => {
             formData.size = formData.size.map((item) => {
                 return {
                     ...item,
-                    quantity: parseInt(size.quantity)
+                    quantity: parseInt(item.quantity)
                 }
             })
         }
@@ -79,8 +79,8 @@ const AdminProduct = () => {
                 <label htmlFor="price">Price of Product</label>
                 <input type="number" name='price' onChange={handleChange} value={newProduct.price} />
 
-                <label htmlFor="category">Category of Product</label>
-                <input type="text" name='category' onChange={handleChange} value={newProduct.category} />
+                <label htmlFor="category_id">Category of Product</label>
+                <input type="text" name='category_id' onChange={handleChange} value={newProduct.category_id} />
 
                 <label htmlFor="size">Size of Product</label>
                 <input type="text" name='size' onChange={handleSizeChange} value={size.size} />
