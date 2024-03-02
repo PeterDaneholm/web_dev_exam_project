@@ -22,7 +22,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <div className='grid h-screen pt-20'>
+      <div className='grid h-screen'>
         <Outlet />
       </div>
     </>

@@ -41,11 +41,11 @@ const router = createBrowserRouter([
     errorElement: <Errorpage />,
     children: [
       {
-        path: "/products",
+        path: "/shop",
         element: <ProductsPage />
       },
       {
-        path: "/products/:id",
+        path: "/shop/:id",
         element: <ProductPage />
       },
       {
@@ -53,21 +53,17 @@ const router = createBrowserRouter([
         element: <Profile />
       },
       {
-        path: "/profile/:username",
-        element: <Profile />
-      },
-      {
-        path: "/uploadproduct",
-        element: <AdminProduct />,/* (
-          <ProtectedRoute scopes={['admin']}>
+        path: "/admin",
+        element: <Admin />,/* (
+          <ProtectedRoute scopes={['Admin']}>
             <AdminProduct />
           </ProtectedRoute>
         ) */
         children: [
           {
-            path: "/uploadproduct",
+            path: "/admin/uploadproduct",
             element: <AdminProduct />/* (
-              <ProtectedRoute scopes={['admin']}>
+              <ProtectedRoute scopes={['Admin']}>
                 <AdminProduct />
               </ProtectedRoute>
             ) */
@@ -84,24 +80,6 @@ const router = createBrowserRouter([
     path: "/signup",
     element: <Signup />
   },
-  {
-    path: "/admin",
-    element: <Admin />/* (
-      <ProtectedRoute scopes={['admin']}>
-        <Admin />
-      </ProtectedRoute>
-    ) */,
-    childen: [
-      {
-        path: "/uploadproduct",
-        element: <AdminProduct />/* (
-          <ProtectedRoute scopes={['admin']}>
-            <AdminProduct />
-          </ProtectedRoute>
-        ) */
-      },
-    ]
-  }
 ])
 
 ReactDOM.createRoot(document.getElementById('root')).render(

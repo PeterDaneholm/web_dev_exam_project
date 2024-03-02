@@ -14,7 +14,7 @@ export default function alreadyLogin(navigate) {
     if (decoded.scopes === "Admin") {
         navigate("/admin")
     } else {
-        navigate("/products")
+        navigate("/shop")
     }
     return null
 }

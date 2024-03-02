@@ -3,7 +3,7 @@ import React from 'react'
 const Errorpage = () => {
   return (
     <div>
-      Too bad sucker!
+      This page does not exist
     </div>
   )
 }
