@@ -3,6 +3,8 @@ import Searchbar from '../components/Searchbar.jsx'
 
 
 const ProductsPage = () => {
+
+
     return (
         <div className='h-full w-full'>
             <div className='bg-orange-50 w-[90%] h-24 shadow-md mx-auto m-2'>

@@ -1,5 +1,5 @@
 from fastapi import Depends, HTTPException, status, Security, Request
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, SecurityScopes
+from fastapi.security import OAuth2PasswordBearer, SecurityScopes
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel , ValidationError
@@ -10,6 +10,7 @@ import models
 from sqlalchemy.orm import Session, Mapped
 from sqlalchemy import Column, String
 from database import db_dependency
+from utils import OAuth2PasswordBearerWithCookie
 
 SECRET_KEY = "bdd156f186b21dc04527a7ed4b4feb05d738244c1e5f22bf027bc2984d42a997"
 ALGORITHM = "HS256"
@@ -17,7 +18,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oath2_scheme = OAuth2PasswordBearer(tokenUrl="token", scopes={"Admin": "Can manage website data", "user": "Can browse and shop"})
+#oath2_scheme = OAuth2PasswordBearer(tokenUrl="token", scopes={"Admin": "Can manage website data", "user": "Can browse and shop"})
+oath2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="/login", scopes={"Admin": "Can manage website data", "user": "Can browse and shop"})
 
 class UserInDB(User):
     hashed_password: Mapped[str] = Column(String(100))
@@ -50,10 +52,11 @@ def authenticate_user(db, username:str, password: str):
     return user
 
 async def get_token_from_cookie(request: Request):
-    token = request.cookies.get("token")
+    print("getting cookie")
+    token = request.cookies.get("access_token")
+    print(token)
     if not token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not authenticate")
-    print(token)
     return token
 
 async def get_current_user(

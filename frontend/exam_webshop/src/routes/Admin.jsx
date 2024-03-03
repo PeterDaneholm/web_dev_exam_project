@@ -21,7 +21,7 @@ const Admin = () => {
 
             <div className='m-6 p-3 bg-slate-200 w-screen h-auto rounded-xl shadow-sm'>
 
-                <Link to={"/admin/uploadproduct"}>Upload</Link>
+                <Link to={"uploadproduct"}>Upload</Link>
             </div>
 
         </div>

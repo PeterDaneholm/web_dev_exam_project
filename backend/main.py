@@ -26,7 +26,6 @@ app.add_middleware(
 )
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-token_blacklist = set()
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -80,32 +79,50 @@ class OrderBase(BaseModel):
     order_date: date
     total: float
 
-
-@app.get("/")
-async def root():
-    return {"message": "hello world"}
-
 #LOGIN
-@app.post("/login/")
-async def create_access_from_login(response: Response, 
-                                   form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency) -> Token:
+@app.post("/login")
+async def create_access_token_from_login(
+                                        db: db_dependency,
+                                        response: Response,
+                                        form_data: OAuth2PasswordRequestForm = Depends(),
+                                         ):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"})
     access_token_expires = timedelta(minutes=60)
     access_token = create_access_token(data={"sub": user.username, "scopes": user.role}, expires_delta=access_token_expires)
-    response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True)
-    print(access_token)
-    
-    return Token(access_token=access_token, token_type="bearer")
+    response.set_cookie(key="access_token", 
+                        value=f"Bearer {access_token}", 
+                        httponly=True,
+
+                        )
+    print(response.headers)
+    return {"access_token": access_token, "token_type": "bearer"}
+
+#LOGIN
+#@app.post("/login/")
+#async def create_access_from_login(response: Response, 
+#                                   form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
+#                                   db: db_dependency):
+#    user = authenticate_user(db, form_data.username, form_data.password)
+#    if not user:
+#        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"})
+#    access_token_expires = timedelta(minutes=60)
+#    access_token = create_access_token(data={"sub": user.username, "scopes": user.role}, expires_delta=access_token_expires)
+#    print("Token: " + access_token)
+#    response.set_cookie(key="access_token", 
+#                        value=f"Bearer {access_token}", 
+#                        httponly=True,
+#                        #samesite=True,
+#                        #secure=True,
+#                        #domain="localhost:8000",
+#                        )
+#    print(response.headers)
+#    return {"access_token": access_token, "token_type": "bearer"}
+#    #return Token(access_token=access_token, token_type="bearer")
 
 
 #LOGOUT
-#@app.post("/logout/")
-#async def logout(token: str = Depends(oath2_scheme)):
-#    token_blacklist.add(token)
-#    return {"detail": "Logout successful"}
-
 @app.post("/logout")
 async def logout(response: Response ):
     response.delete_cookie("access_token")
@@ -127,6 +144,7 @@ async def create_user(user: UserBase, db: db_dependency):
     db.add(db_user)
     db.commit()
     return db_user
+
 
 #Get all users
 @app.get("/users/", response_model=List[UserBase])
@@ -189,6 +207,7 @@ async def create_product(product: ProductBase,
     db.commit()
     return new_product
 
+
 #Get all Products
 @app.get("/products/", response_model=List[ProductBase])
 async def get_products(db: db_dependency):
@@ -198,6 +217,7 @@ async def get_products(db: db_dependency):
         
     return db_products
 
+
 #Get specific Product
 @app.get("/products/{product_id}", status_code=status.HTTP_200_OK)
 async def get_product(product_id: str, db: db_dependency):
@@ -205,6 +225,7 @@ async def get_product(product_id: str, db: db_dependency):
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")
     return db_product
+
 
 #Update Product
 @app.put("/products/{product_id}", status_code=status.HTTP_200_OK)
@@ -220,6 +241,7 @@ async def update_product(product_id: str, product: UpdateProduct, db: db_depende
     db.refresh(db_product)
 
     return db_product
+
 
 #Delete Product
 @app.delete("/products/{product_id}", status_code=status.HTTP_200_OK)

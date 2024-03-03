@@ -55,7 +55,7 @@ const router = createBrowserRouter([
       {
         path: "/admin",
         element: <Admin />,/* (
-          <ProtectedRoute scopes={['Admin']}>
+          <ProtectedRoute scopes={['admin']}>
             <AdminProduct />
           </ProtectedRoute>
         ) */
@@ -63,7 +63,7 @@ const router = createBrowserRouter([
           {
             path: "/admin/uploadproduct",
             element: <AdminProduct />/* (
-              <ProtectedRoute scopes={['Admin']}>
+              <ProtectedRoute scopes={['admin']}>
                 <AdminProduct />
               </ProtectedRoute>
             ) */

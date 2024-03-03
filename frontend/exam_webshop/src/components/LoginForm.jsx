@@ -25,13 +25,14 @@ const LoginForm = () => {
         const response = await api.post("/login", login, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
-            }
+            },
+            withCredentials: true
         });
         console.log("Login repsonse", response)
         if (response.status === 200) {
             console.log(response.data)
             //Cookies.set('token', response.data.access_token, { secure: true })
-            navigate("/products");
+            navigate("/shop");
         }
     }
 
