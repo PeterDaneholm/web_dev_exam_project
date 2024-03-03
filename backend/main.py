@@ -6,10 +6,13 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from datetime import date, timedelta
 from database import engine, SessionLocal
+from jose import JWTError, jwt
 import models
 from auth import get_current_user, get_admin_user, authenticate_user, create_access_token, Token, oath2_scheme
 from database import db_dependency
 from passlib.context import CryptContext
+from dotenv import load_dotenv
+import os
 
 app = FastAPI()
 
@@ -24,6 +27,9 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*']
 )
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -148,7 +154,19 @@ async def create_user(user: UserBase, db: db_dependency):
 
 #Get all users
 @app.get("/users/", response_model=List[UserBase])
-async def get_users(db:db_dependency, current_user: Annotated[UserBase, Security(get_current_user, scopes=["Admin"])]):
+async def get_users(db:db_dependency, 
+                    request: Request,
+                    #current_user: Annotated[UserBase, Security(get_current_user, scopes=["Admin"])]
+                    #token: str = Depends(oath2_scheme)
+                    ):
+    token = request.cookies.get("access_token")
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    if "Admin" not in payload["scopes"]:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not enough permissions",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
     db_users = db.query(models.User).filter(models.User.role == 'user').all()
     if db_users is None:
         raise HTTPException(status_code=404, detail="Users could not be found")
