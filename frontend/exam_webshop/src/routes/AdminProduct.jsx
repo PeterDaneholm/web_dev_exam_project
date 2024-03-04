@@ -56,13 +56,14 @@ const AdminProduct = () => {
                 }
             })
         }
-        console.log("Product data to request", formData)
+        //console.log("Product data to request", formData)
         const response = await api.post("/products", formData, {
             headers: {
                 'Authorization': `Bearer ${token}`
-            }
+            },
+            allowCredentials: true,
         })
-        console.log("Response: ", response)
+        //console.log("Response: ", response)
         navigate("/admin")
     }
 
