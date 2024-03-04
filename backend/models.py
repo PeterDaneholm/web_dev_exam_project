@@ -10,7 +10,7 @@ class CategoryEnum(PythonEnum):
     SUIT = 'suit'
     SPORTCLOTHES = 'sportclothes'
     SHOES = 'shoes'
-    ACCESORIES = 'accesories'
+    ACCESORIES = 'accessories'
     SPORTEQUIPMENT = 'sportequipment'
 
 class ProductSize(Base):
