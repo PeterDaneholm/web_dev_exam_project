@@ -25,8 +25,6 @@ const AdminProduct = () => {
         })
     }
 
-    console.log("test logging")
-
     const handleSizeChange = (e) => {
         setSize((prev) => {
             return {

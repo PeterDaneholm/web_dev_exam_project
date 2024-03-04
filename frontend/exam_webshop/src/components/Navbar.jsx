@@ -1,13 +1,31 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { FaRegUserCircle } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
 import { Link, Route } from 'react-router-dom';
-import Cookies from 'js-cookie';
+
 
 
 const Navbar = () => {
     const [profileOpen, setProfileOpen] = useState(false)
     const [productCartOpen, setProductCartOpen] = useState(false)
+    const profileRef = useRef()
+    const productCartRef = useRef()
+
+    useEffect(() => {
+        const handleOutsideClick = (event) => {
+            if (!profileRef.current?.contains(event.target)) {
+                setProfileOpen(false)
+            }
+            if (!productCartRef.current?.contains(event.target)) {
+                setProductCartOpen(false)
+            }
+        }
+        window.addEventListener('click', handleOutsideClick)
+
+        return () => {
+            window.removeEventListener('click', handleOutsideClick)
+        }
+    }, [])
 
     return (
         <div className='sticky bg-orange-100 h-20 w-full flex flex-row justify-between'>
@@ -18,7 +36,8 @@ const Navbar = () => {
 
             <div className='flex flex-row justify-evenly w-[30%] float-end items-center'>
                 <div className='relative inline-block'>
-                    <button onClick={() => setProductCartOpen(!productCartOpen)}>
+                    <button onClick={() => setProductCartOpen(!productCartOpen)}
+                        className='' ref={productCartRef}>
                         <FaCartShopping />
                     </button>
                     {productCartOpen ?
@@ -29,7 +48,8 @@ const Navbar = () => {
                 </div>
 
                 <div className='relative inline-block'>
-                    <button onClick={() => setProfileOpen(!profileOpen)}>
+                    <button onClick={() => setProfileOpen(!profileOpen)}
+                        className='' ref={profileRef}>
                         <FaRegUserCircle />
                     </button>
                     {profileOpen ?
