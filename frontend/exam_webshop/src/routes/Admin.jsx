@@ -1,11 +1,25 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { MdOutlineDashboard } from "react-icons/md";
 import { FaBasketShopping } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
+import api from '../api';
 
 
 const Admin = () => {
+    const [users, setUsers] = useState([])
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            const response = await api.get("/users/", {
+                withCredentials: true,
+
+            })
+            console.log(response)
+            setUsers(response.data)
+        }
+        fetchUsers()
+    }, [])
 
 
     return (

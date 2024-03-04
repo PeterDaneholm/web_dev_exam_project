@@ -9,7 +9,7 @@ from database import engine, SessionLocal
 from jose import JWTError, jwt
 import models
 from auth import get_current_user, get_admin_user, authenticate_user, create_access_token, Token, oath2_scheme
-from database import db_dependency
+from database import db_dependency, get_db
 from passlib.context import CryptContext
 from dotenv import load_dotenv
 import os
@@ -17,7 +17,8 @@ import os
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "http://localhost:8000"
 ]
 
 app.add_middleware(
@@ -41,7 +42,6 @@ class UserBase(BaseModel):
     email_address: str
     first_name: str
     last_name: str
-    password: str
     role: str
 
 class UpdateUser(UserBase):
@@ -96,7 +96,7 @@ async def create_access_token_from_login(
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"})
     access_token_expires = timedelta(minutes=60)
-    access_token = create_access_token(data={"sub": user.username, "scopes": user.role}, expires_delta=access_token_expires)
+    access_token = create_access_token(data={"sub": user.username, "scopes": [user.role]}, expires_delta=access_token_expires)
     response.set_cookie(key="access_token", 
                         value=f"Bearer {access_token}", 
                         httponly=True,
@@ -156,22 +156,36 @@ async def create_user(user: UserBase, db: db_dependency):
 @app.get("/users/", response_model=List[UserBase])
 async def get_users(db:db_dependency, 
                     request: Request,
-                    #current_user: Annotated[UserBase, Security(get_current_user, scopes=["Admin"])]
+                    current_user: Annotated[UserBase, Security(get_current_user, scopes=["Admin"])]
                     #token: str = Depends(oath2_scheme)
                     ):
-    token = request.cookies.get("access_token")
-    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    if "Admin" not in payload["scopes"]:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not enough permissions",
-            headers={"WWW-Authenticate": "Bearer"}
-        )
-    db_users = db.query(models.User).filter(models.User.role == 'user').all()
-    if db_users is None:
-        raise HTTPException(status_code=404, detail="Users could not be found")
+    try:
+        token = request.cookies.get("access_token")
+        print(f"Token: {token}")
+        if token.startswith("Bearer "):
+            token = token[7:]
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        print(f"Payload: {payload}")
+        if 'Admin' not in payload["scopes"]:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Not enough permissions",
+                headers={"WWW-Authenticate": "Bearer"}
+            )
+        db_users = db.query(models.User).filter(models.User.role == 'user').all()
+        if db_users is None:
+            raise HTTPException(status_code=404, detail="Users could not be found")
+        users_without_password = []
+        for user in db_users:
+            user_dict = user.__dict__
+            user_dict.pop('_sa_instance_state', None) #Is this necessary? Included for now until tested
+            user_dict.pop('password', None)
+            users_without_password.append(user_dict)
 
-    return db_users
+        return users_without_password
+    except Exception as e:
+        print(f"Error: {e}")
+        raise
 
 #Get specific user
 @app.get("/users/{user_id}", status_code=status.HTTP_200_OK)
@@ -179,6 +193,8 @@ async def get_user(user_id: str, db: db_dependency):
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
+    #Validate that the username is the same as the token
+
 
     return db_user
 
