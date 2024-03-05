@@ -4,12 +4,17 @@ import { MdOutlineDashboard } from "react-icons/md";
 import { FaBasketShopping } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
 import api from '../api';
+import { onAdminRouteLoad } from '../utilities/get_user';
+import { useNavigate } from 'react-router-dom'
 
 
 const Admin = () => {
     const [users, setUsers] = useState([])
+    const navigate = useNavigate()
 
     useEffect(() => {
+        onAdminRouteLoad(navigate)
+
         const fetchUsers = async () => {
             const response = await api.get("/users/", {
                 withCredentials: true,
