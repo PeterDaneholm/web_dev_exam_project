@@ -11,22 +11,35 @@ async function GetUser() {
 export async function onAdminRouteLoad(navigate) {
     try {
         const user = await GetUser();
-        //console.log("user", user)
 
-        if (user.scopes === ("Admin")) {
+        if (user.role === "Admin") {
             return null
         } else {
             redirectToShop(navigate);
         }
     } catch (error) {
-        //console.log("Error", error)
         redirectToLogin(navigate);
     }
 }
 
-function allowAdmin() {
+export async function hasToken(navigate) {
+    try {
+        const response = await api.get("/checktoken", {
+            withCredentials: true,
+        })
 
+        if (!response.data.valid) {
+            navigate("/login")
+        } else {
+            navigate("/shop")
+        }
+
+    } catch (error) {
+        console.error("Error checking token", error)
+        navigate("/login")
+    }
 }
+
 
 function redirectToLogin(navigate) {
     navigate("/login")

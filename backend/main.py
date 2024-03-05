@@ -132,7 +132,13 @@ async def create_access_token_from_login(
 @app.post("/logout")
 async def logout(response: Response ):
     response.delete_cookie("access_token")
+    print(response.headers)
     return {"status": "success"}
+
+
+@app.get("/checktoken")
+async def check_token(current_user: Annotated[UserBase, Depends(get_current_user)]):
+    return current_user
 
 
 #USER ROUTES

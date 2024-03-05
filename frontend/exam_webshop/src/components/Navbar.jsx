@@ -61,7 +61,7 @@ const Navbar = () => {
                                 <Link to={'/admin'}>
                                     Admin
                                 </Link>
-                                <Link to={'/logout'}>
+                                <Link to={'/signout'}>
                                     Sign Out
                                 </Link>
                             </div>

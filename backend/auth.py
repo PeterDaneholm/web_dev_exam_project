@@ -89,7 +89,6 @@ async def get_current_user(
     user = get_user(username=token_data.username, db=db)
     if user is None:
         raise credentials_exception
-    print(user)
     for scope in security_scopes.scopes:
         if scope not in token_data.scopes:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not allowed", headers={"WWW-Authenticate": authenticate_value})

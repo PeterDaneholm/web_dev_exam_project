@@ -1,6 +1,7 @@
 import Navbar from './components/Navbar';
 //import './App.css'
-import { Outlet, Link, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
+import HomePage from './components/HomePage'
 import ProductPage from './routes/ProductPage';
 import ProductsPage from './routes/ProductsPage';
 import Admin from './routes/Admin';
@@ -20,7 +21,7 @@ function App() {
       <CartProvider>
         <Navbar />
         <Routes>
-          <Route path="/" element="" />
+          <Route path="/" element={<HomePage />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signout" element={<Signout />} />
