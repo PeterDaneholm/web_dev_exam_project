@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import api from '../api'
 import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 import Cookies from 'js-cookie'
-
+import { onAdminRouteLoad } from '../utilities/get_user'
 
 const AdminProduct = () => {
     const [newProduct, setNewProduct] = useState({
@@ -15,6 +15,10 @@ const AdminProduct = () => {
     })
     const [size, setSize] = useState({ size: "", quantity: 0 })
     const navigate = useNavigate()
+
+    useEffect(() => {
+        onAdminRouteLoad(navigate)
+    }, [])
 
     const handleChange = (e) => {
         setNewProduct((prev) => {

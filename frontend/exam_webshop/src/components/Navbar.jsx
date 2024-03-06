@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { FaRegUserCircle } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
 import { Link, Route } from 'react-router-dom';
+import ProductCart from './ProductCart';
 
 
 
@@ -41,9 +42,7 @@ const Navbar = () => {
                         <FaCartShopping />
                     </button>
                     {productCartOpen ?
-                        <div className='absolute bg-slate-100 w-32 flex h-44 p-2 '>
-                            Hello
-                        </div>
+                        <ProductCart />
                         : ''}
                 </div>
 

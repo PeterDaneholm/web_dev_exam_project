@@ -1,9 +1,12 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useContext } from 'react'
+import { CartContext } from './CartContext'
 
 
 const ProductCardSmall = ({ category_id, name, price, description, size, id, on_sale }) => {
     const navigate = useNavigate()
+    const { cart, addToCart, removeFromCart } = useContext(CartContext)
 
     const redirectToProduct = () => {
         navigate(`/shop/${id}`)
@@ -18,7 +21,7 @@ const ProductCardSmall = ({ category_id, name, price, description, size, id, on_
                 <p>{price} EUR</p>
 
             </div>
-            <button>Add to Cart</button>
+            <button onClick={() => addToCart({ id, name, price })}>Add to Cart</button>
         </div>
     )
 }
