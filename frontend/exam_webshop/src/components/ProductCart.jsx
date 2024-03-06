@@ -7,14 +7,16 @@ const ProductCart = () => {
 
 
     return (
-        <div className='absolute bg-slate-100 flex flex-col h-44 p-2 w-auto'>
+        <div className='absolute bg-slate-100 flex flex-col h-44 p-2 w-auto gap-2'>
             {cart.map((item, index) =>
                 <div key={index}
-                    className='' >
+                    className='border-b-2 w-full ' >
                     {item.name}
                     {item.price}
                 </div>
             )}
+
+            <h4>Total:</h4>
 
         </div>
     )

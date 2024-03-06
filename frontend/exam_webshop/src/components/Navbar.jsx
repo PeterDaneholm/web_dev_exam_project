@@ -3,7 +3,8 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
 import { Link, Route } from 'react-router-dom';
 import ProductCart from './ProductCart';
-
+import { useContext } from 'react';
+import { CartContext } from './CartContext';
 
 
 const Navbar = () => {
@@ -11,6 +12,7 @@ const Navbar = () => {
     const [productCartOpen, setProductCartOpen] = useState(false)
     const profileRef = useRef()
     const productCartRef = useRef()
+    const { cart } = useContext(CartContext)
 
     useEffect(() => {
         const handleOutsideClick = (event) => {
@@ -40,9 +42,14 @@ const Navbar = () => {
                     <button onClick={() => setProductCartOpen(!productCartOpen)}
                         className='' ref={productCartRef}>
                         <FaCartShopping />
+                        {cart.length == 0 ?
+                            "" :
+                            <div className='w-5 h-5 bg-red-500 rounded-xl absolute bottom-4 left-2'>{cart.length}</div>
+                        }
                     </button>
-                    {productCartOpen ?
+                    {productCartOpen ? <>
                         <ProductCart />
+                    </>
                         : ''}
                 </div>
 

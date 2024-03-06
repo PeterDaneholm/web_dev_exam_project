@@ -40,13 +40,11 @@ const ProductsPage = () => {
 
                 <div className='w-full'>
                     <Searchbar />
-                    <div>
-                        <h2>Hero Product</h2>
-                    </div>
+
 
                     <div className='bg-gray-200 w-[90%] mx-auto h-screen'>
                         <h3>Products</h3>
-                        <ul>
+                        <ul className='flex flex-row flex-wrap'>
                             {products.map((prod) => {
                                 return (
                                     <li key={prod.id}><ProductCardSmall {...prod} /></li>

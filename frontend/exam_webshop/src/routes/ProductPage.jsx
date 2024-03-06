@@ -27,12 +27,9 @@ const ProductPage = () => {
             <p>{product.description}</p>
 
             <div>
-
-                {product.size && Object.values(product.size).map((item) => {
-                    return <p key={item.id}>{item.size}: {item.quantity} in stock</p>
-                }
-                )
-                }
+                {product.size && Object.values(product.size).map((item) =>
+                    <p key={item.id}>{item.size}: {item.quantity} in stock</p>
+                )}
             </div>
 
         </div>
