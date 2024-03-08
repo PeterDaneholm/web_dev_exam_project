@@ -1,6 +1,6 @@
 from fastapi import Depends, HTTPException, status, Security, Request
-from fastapi.security import OAuth2PasswordBearer, SecurityScopes
-from jose import JWTError, jwt
+from fastapi.security import SecurityScopes
+from jose import ExpiredSignatureError, JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel , ValidationError
 from typing import List, Annotated
@@ -83,6 +83,8 @@ async def get_current_user(
         #token_scopes = payload.get("scopes", [])
         #token_scopes = token_scopes if isinstance(token_scopes, list) else [token_scopes]
         #token_data = TokenData(token_scopes=token_scopes, username=username)
+    except ExpiredSignatureError:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token has expired", headers={"WWW-Authenticate": authenticate_value})
     except (JWTError, ValidationError):
         raise credentials_exception
     print("decoded" + token_data.json())

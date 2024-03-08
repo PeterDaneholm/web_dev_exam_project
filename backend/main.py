@@ -149,7 +149,6 @@ async def create_user(user: UserBase, db: db_dependency):
     if existing_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already exists")
     hashed_password = pwd_context.hash(user.password)
-    #user_dict = models.User(**user.model_dump())
     user_dict = user.dict(by_alias=True)
     user_dict["password"]  = hashed_password
     db_user = models.User(**user_dict)
