@@ -10,7 +10,7 @@ const ProductPage = () => {
     const [product, setProduct] = useState({});
     const [currentSize, setCurrentSize] = useState({})
     const { id } = useParams();
-    const { addToCart, removeFromCart } = useContext(CartContext);
+    const { addToCart } = useContext(CartContext);
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -23,7 +23,6 @@ const ProductPage = () => {
 
         getProduct()
     }, [id])
-    console.log(product)
 
     const AddProduct = (e) => {
         const toCart = { ...product, size: currentSize }

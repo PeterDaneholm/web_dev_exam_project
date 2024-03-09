@@ -41,9 +41,9 @@ const Navbar = () => {
     }, [])
 
     return (
-        <div className='sticky bg-orange-100 h-20 w-full flex flex-row justify-between'>
+        <div className='sticky bg-primary h-20 w-full flex flex-row justify-between'>
             <Link to={'/shop'}>
-                <h1 className='my-4 ml-4 text-2xl w-[30%]'>WebShop Name</h1>
+                <h1 className='my-2 ml-4 text-2xl w-[50%]'>Stuff n' Things</h1>
             </Link>
 
             {user !== "" ?
