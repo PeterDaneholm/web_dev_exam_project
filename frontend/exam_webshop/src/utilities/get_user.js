@@ -22,6 +22,24 @@ export async function onAdminRouteLoad(navigate) {
     }
 }
 
+export async function isUserLoggedIn(navigate) {
+    try {
+        const response = await api.get("/users/me", {
+            withCredentials: true
+        })
+
+        if (response.status !== 200) {
+            navigate("/login")
+        } else {
+            return null
+        }
+
+    } catch (error) {
+        console.error(error)
+        navigate("/login")
+    }
+}
+
 export async function hasToken(navigate) {
     try {
         const response = await api.get("/checktoken", {

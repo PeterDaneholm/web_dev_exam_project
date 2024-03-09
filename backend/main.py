@@ -156,6 +156,7 @@ async def create_user(user: UserBase, db: db_dependency):
     db.commit()
     return db_user
 
+#Authentication route for checking user is logged in
 @app.get("/users/me", response_model=UserBase)
 async def read_current_user(user: UserBase = Depends(get_current_user)):
     return user

@@ -1,6 +1,7 @@
 import React from 'react'
 import { useContext, useState, useEffect } from 'react'
 import { CartContext } from './CartContext'
+import { Link } from 'react-router-dom'
 
 const ProductCart = () => {
     const { cart, removeFromCart } = useContext(CartContext)
@@ -18,6 +19,9 @@ const ProductCart = () => {
 
             <h4>Total:</h4>
 
+            <Link to={"/checkout"}>
+                Checkout
+            </Link>
         </div>
     )
 }
