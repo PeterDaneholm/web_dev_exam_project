@@ -1,12 +1,17 @@
 import React from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import api from '../api'
 import { useParams } from 'react-router-dom'
+import { CartContext } from '../components/CartContext'
+import { useNavigate } from 'react-router-dom'
 
 
 const ProductPage = () => {
-    const [product, setProduct] = useState({})
-    const { id } = useParams()
+    const [product, setProduct] = useState({});
+    const [currentSize, setCurrentSize] = useState({})
+    const { id } = useParams();
+    const { addToCart, removeFromCart } = useContext(CartContext);
+    const navigate = useNavigate()
 
     useEffect(() => {
         const getProduct = async () => {
@@ -18,7 +23,15 @@ const ProductPage = () => {
 
         getProduct()
     }, [id])
-    //console.log(product)
+    console.log(product)
+
+    const AddProduct = (e) => {
+        const toCart = { ...product, size: currentSize }
+        console.log(toCart)
+        addToCart(toCart)
+        navigate("/shop")
+
+    }
 
     return (
         <div>
@@ -28,10 +41,12 @@ const ProductPage = () => {
 
             <div>
                 {product.size && Object.values(product.size).map((item) =>
-                    <p key={item.id}>{item.size}: {item.quantity} in stock</p>
+                    <button onClick={() => setCurrentSize(item)}
+                        key={item.id}>{item.size}: {item.quantity} in stock</button>
                 )}
             </div>
 
+            <button onClick={AddProduct}>Add to Cart</button>
         </div>
     )
 }
