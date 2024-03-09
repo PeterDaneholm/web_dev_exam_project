@@ -20,7 +20,7 @@ const Admin = () => {
                 withCredentials: true,
 
             })
-            console.log(response)
+            //console.log(response)
             setUsers(response.data)
         }
         fetchUsers()

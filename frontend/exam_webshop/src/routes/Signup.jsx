@@ -3,7 +3,7 @@ import SignUpForm from '../components/SignUpForm'
 
 const Signup = () => {
     return (
-        <div>
+        <div className='h-[85%]'>
             <SignUpForm />
         </div>
     )
