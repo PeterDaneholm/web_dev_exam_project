@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, status, Security, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from typing import Annotated, List
+from typing import Annotated, List, Optional
 from sqlalchemy.orm import Session, joinedload
 from pydantic import BaseModel
 from datetime import date, timedelta
@@ -36,23 +36,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 models.Base.metadata.create_all(bind=engine)
 
-class UserBase(BaseModel):
-    id: str
-    username:str
-    email_address: str
-    first_name: str
-    last_name: str
-    role: str
-
-class UpdateUser(UserBase):
-    id: str = None
-    email_address: str = None
-    username: str = None
-    first_name: str = None
-    last_name: str = None
-    password: str = None
-    role: str = 'user'
-
 class ProductSize(BaseModel):
     size: str
     quantity: int
@@ -65,7 +48,31 @@ class ProductBase(BaseModel):
     on_sale: bool = False
     size: List[ProductSize] = None
     category_id: str
-    #user_rating: float
+    image_id: Optional[List[str]] = None
+
+class OrderBase(BaseModel):
+    products: List[str]
+    customer_id: str
+    total: float
+
+class UserBase(BaseModel):
+    id: str
+    username:str
+    password: str
+    email_address: str
+    first_name: str
+    last_name: str
+    role: str
+    orders: Optional[List[OrderBase]] = []
+
+class UpdateUser(UserBase):
+    id: str = None
+    email_address: str = None
+    username: str = None
+    first_name: str = None
+    last_name: str = None
+    password: str = None
+    role: str = 'user'
 
 class UpdateProduct(ProductBase):
     id: str = None
@@ -77,13 +84,6 @@ class UpdateProduct(ProductBase):
     category_id: str = None
     #user_rating: float = None
 
-class OrderBase(BaseModel):
-    id: str
-    product_id: str
-    quantity: int
-    customer: str
-    order_date: date
-    total: float
 
 #LOGIN
 @app.post("/login")
@@ -300,16 +300,34 @@ async def delete_product(product_id: str, db: db_dependency):
 
 #ORDER ROUTES
 #Create new Order
-@app.post("/orders/", status_code=status.HTTP_200_OK)
-async def create_order(order: OrderBase, db: db_dependency):
-    new_order = models.Order(**order.model_dump())
+@app.post("/neworder/", status_code=status.HTTP_200_OK)
+async def create_order(order: OrderBase, 
+                       db: db_dependency,
+                       current_user: Annotated[UserBase, Security(get_current_user)]):
+    print("order", order)
+
+    products = db.query(models.Product).filter(models.Product.id.in_(order.products)).all()
+
+    new_order = models.Order(products=products, customer_id=order.customer_id, total=order.total)
+
+    #Need to update size quantity
+    #size = db.query(models.ProductSize).filter(models.ProductSize.id == new_order.products.size.id).first()
+    #print(size)
+    #size.quantity = size.quantity - 1
+
+    #need to add orders to user's orders
+    user = db.query(models.User).filter(models.User.id == order.customer_id).first()
+    print(user)
+    #user.orders.append(new_order.id)
+
     db.add(new_order)
     db.commit()
     return new_order
 
 #Get all Orders
 @app.get("/orders/", response_model=List[OrderBase])
-async def get_orders(db: db_dependency):
+async def get_orders(db: db_dependency,
+                     current_user: Annotated[UserBase, Security(get_current_user, scopes=["Admin"])]):
     db_orders = db.query(models.Order).all()
     if db_orders is None:
         raise HTTPException(status_code=404, detail="Could not find any orders")
@@ -325,6 +343,3 @@ async def get_order(order_id: str, db: db_dependency):
     
     return db_order
 
-#Update Order??
-
-#Delete Order??

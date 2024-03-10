@@ -21,7 +21,7 @@ const Navbar = () => {
             const response = await api.get("/users/me", {
                 withCredentials: true
             })
-            setUser(response.data.username)
+            setUser(response.data)
         }
         getUser()
 
@@ -46,7 +46,7 @@ const Navbar = () => {
                 <h1 className='my-2 ml-4 text-2xl w-[50%]'>Stuff n' Things</h1>
             </Link>
 
-            {user !== "" ?
+            {user.username !== "" ?
                 <div className='flex flex-row justify-evenly w-[30%] float-end items-center'>
                     <div className='relative inline-block'>
                         <button onClick={() => setProductCartOpen(!productCartOpen)}
@@ -58,7 +58,7 @@ const Navbar = () => {
                             }
                         </button>
                         {productCartOpen ? <>
-                            <ProductCart />
+                            <ProductCart user={user} />
                         </>
                             : ''}
                     </div>

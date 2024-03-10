@@ -1,8 +1,9 @@
-from sqlalchemy import Boolean, Column, Integer, String, Float, Date, ForeignKey, VARCHAR, BLOB, Enum
+from sqlalchemy import Boolean, Column, Integer, String, Float, Date, ForeignKey, VARCHAR, BLOB, Enum, PrimaryKeyConstraint
 from sqlalchemy.orm import relationship
 from database import Base
 from enum import Enum as PythonEnum
 import uuid
+import datetime
 
 class CategoryEnum(PythonEnum):
     BASEBALL = 'baseball'
@@ -13,12 +14,21 @@ class CategoryEnum(PythonEnum):
     ACCESORIES = 'accessories'
     SPORTEQUIPMENT = 'sportequipment'
 
+#association table between orders and users
+class OrderProducts(Base):
+    __tablename__ = "orderproducts"
+    products = Column(VARCHAR(36), ForeignKey('products.id'))
+    orders = Column(VARCHAR(36), ForeignKey('orders.id'))
+    __table_args__ = (
+        PrimaryKeyConstraint('products', 'orders'),
+    )
+
 class ProductSize(Base):
     __tablename__ = "productsize"
     id = Column(VARCHAR(36), primary_key=True, default=uuid.uuid4, index=True)
     size = Column(String(10), index=True)
     quantity = Column(Integer)
-    product_id = Column(VARCHAR(36), ForeignKey('product.id'))
+    product_id = Column(VARCHAR(36), ForeignKey('products.id'))
 
 
 class User(Base):
@@ -35,7 +45,7 @@ class User(Base):
 
 
 class Product(Base):
-    __tablename__ = 'product'
+    __tablename__ = 'products'
 
     id = Column(VARCHAR(36), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     name = Column(String(100), unique=True)
@@ -43,20 +53,19 @@ class Product(Base):
     description = Column(String(400))
     on_sale = Column(Boolean, default=False)
     category_id = Column(Enum(CategoryEnum), nullable=False)
-    #image_id = 
+    image_id = Column(String(100))
     #user_rating = (Float(1))
     size = relationship('ProductSize', backref='productsize')
     reviews = relationship('Review', backref='reviews')
 
 
 class Order(Base):
-    __tablename__ = 'order'
+    __tablename__ = 'orders'
 
     id = Column(VARCHAR(36), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    quantity = Column(Integer)
-    product_id = Column(VARCHAR(36), ForeignKey('product.id'))
-    user_id = Column(VARCHAR(36), ForeignKey('users.id'))
-    order_date = Column(Date)
+    products = relationship('Product', secondary='orderproducts', backref='orders')
+    customer_id = Column(VARCHAR(36), ForeignKey('users.id'))
+    order_date = Column(Date, default=datetime.datetime.now)
     total = Column(Float)
 
 
@@ -64,7 +73,7 @@ class Review(Base):
     __tablename__ = 'reviews'
 
     id = Column(VARCHAR(36), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    product_id = Column(VARCHAR(36), ForeignKey('product.id'))
+    product_id = Column(VARCHAR(36), ForeignKey('products.id'))
     reviewer_id = Column(VARCHAR(36), ForeignKey('users.id'))
     rating = Column(Integer)
     comment = Column(String(1000))
