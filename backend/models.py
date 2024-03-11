@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, String, Float, Date, ForeignKey, VARCHAR, BLOB, Enum, PrimaryKeyConstraint
+from sqlalchemy import Boolean, Column, Integer, String, Float, Date, ForeignKey, VARCHAR, BLOB, Enum, PrimaryKeyConstraint, Table
 from sqlalchemy.orm import relationship
 from database import Base
 from enum import Enum as PythonEnum
@@ -15,13 +15,11 @@ class CategoryEnum(PythonEnum):
     SPORTEQUIPMENT = 'sportequipment'
 
 #association table between orders and users
-class OrderProducts(Base):
-    __tablename__ = "orderproducts"
-    products = Column(VARCHAR(36), ForeignKey('products.id'))
-    orders = Column(VARCHAR(36), ForeignKey('orders.id'))
-    __table_args__ = (
-        PrimaryKeyConstraint('products', 'orders'),
-    )
+#class OrderProducts(Base):
+#    __tablename__ = "orderproducts"
+#    products = Column(VARCHAR(36), ForeignKey('products.id'), primary_key=True)
+#    orders = Column(VARCHAR(36), ForeignKey('orders.id'), primary_key=True)
+
 
 class ProductSize(Base):
     __tablename__ = "productsize"
@@ -41,7 +39,6 @@ class User(Base):
     password = Column(String(100))
     first_name = Column(String(50))
     last_name = Column(String(50))
-    orders = relationship('Order', backref='users')
 
 
 class Product(Base):
@@ -63,10 +60,20 @@ class Order(Base):
     __tablename__ = 'orders'
 
     id = Column(VARCHAR(36), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    products = relationship('Product', secondary='orderproducts', backref='orders')
+    products = relationship('Product', secondary='orderproducts')
     customer_id = Column(VARCHAR(36), ForeignKey('users.id'))
+    customer = relationship('User', back_populates='orders')
     order_date = Column(Date, default=datetime.datetime.now)
     total = Column(Float)
+
+
+OrderProducts = Table('orderproducts', Base.metadata,
+                    Column('order_id', VARCHAR(36), ForeignKey('products.id'), primary_key=True),
+                    Column('product_id', VARCHAR(36), ForeignKey('orders.id'), primary_key=True))
+
+
+User.orders = relationship('Order', back_populates='customer')
+Product.orders = relationship('Order', secondary='orderproducts', back_populates='products')
 
 
 class Review(Base):

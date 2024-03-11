@@ -25,7 +25,7 @@ const ProductPage = () => {
     }, [id])
 
     const AddProduct = (e) => {
-        const toCart = { ...product, size: currentSize }
+        const toCart = { ...product, size: [currentSize] }
         console.log(toCart)
         addToCart(toCart)
         navigate("/shop")

@@ -6,6 +6,7 @@ import ProductCart from './ProductCart';
 import { useContext } from 'react';
 import { CartContext } from './CartContext';
 import api from '../api';
+import ProfileDropdown from './ProfileDropdown';
 
 
 const Navbar = () => {
@@ -70,17 +71,7 @@ const Navbar = () => {
                         </button>
                         {profileOpen ?
                             <div className='absolute top-full left-0 w-16 bg-slate-400'>
-                                <div className='flex flex-col'>
-                                    <Link to={`/profile/${user}`}>
-                                        Profile
-                                    </Link>
-                                    <Link to={'/admin'}>
-                                        Admin
-                                    </Link>
-                                    <Link to={'/signout'}>
-                                        Sign Out
-                                    </Link>
-                                </div>
+                                <ProfileDropdown user={user} />
                             </div>
                             :
                             ''}

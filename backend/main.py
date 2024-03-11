@@ -51,7 +51,7 @@ class ProductBase(BaseModel):
     image_id: Optional[List[str]] = None
 
 class OrderBase(BaseModel):
-    products: List[str]
+    products: List[ProductBase] = []
     customer_id: str
     total: float
 

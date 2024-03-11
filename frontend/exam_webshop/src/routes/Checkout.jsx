@@ -39,13 +39,17 @@ const Checkout = () => {
         e.preventDefault();
         const products = cart.map((item) => item.id
         )
-        const order = { products: products, total: getTotal(cart), customer_id: user }
+        const order = { products: cart, total: getTotal(cart), customer_id: user }
         console.log("order: ", order)
         const response = await api.post("/neworder", order,
             {
                 withCredentials: true,
             })
         console.log(response)
+        cart.forEach(item => {
+            removeFromCart(item)
+        });
+        navigate("/shop")
     }
 
     return (

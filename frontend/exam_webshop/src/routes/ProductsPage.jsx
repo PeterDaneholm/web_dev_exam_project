@@ -24,19 +24,6 @@ const ProductsPage = () => {
             </div>
 
             <div className='flex flex-row h-auto w-full'>
-                <div className='w-40 h-auto py-8 px-4 rounded-lg bg-gray-100 border-black mr-3 mt-3'>
-                    <h2>Categories</h2>
-                    <div className='h-[1px] w-4/5 bg-black mb-3'></div>
-                    <div>
-                        <ul>
-                            <li>Placeholder 1</li>
-                            <li>Placeholder 2</li>
-                            <li>Placeholder 3</li>
-                            <li>Placeholder 4</li>
-                        </ul>
-                    </div>
-                </div>
-
 
                 <div className='w-full'>
                     <Searchbar />
