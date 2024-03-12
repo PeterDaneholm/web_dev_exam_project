@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import api from '../api'
 import { Link, useNavigate } from 'react-router-dom'
+import Button from './basicelements/Button'
+import Input from './basicelements/Input'
 
 
 const LoginForm = () => {
@@ -36,20 +38,19 @@ const LoginForm = () => {
     return (
         <div className='flex rounded-md w-4/5 h-auto flex-col text-center gap-2 bg-primary p-2 m-2 mx-auto self-center'>
             <h2 className='text-xl font-semibold'>Log In</h2>
-            <form onSubmit={handleSubmit} className='flex flex-col border-black justify-center text-center'>
+            <form onSubmit={handleSubmit} className='flex flex-col border-black justify-center text-center gap-2'>
                 <div className='h-[1px] bg-gray-800 rounded-md w-[90%] self-center justify-center'></div>
 
                 <label htmlFor="username">Username</label>
-                <input type='text' onChange={handleChange} name="username" value={login.username} placeholder="Username"
-                    className='w-2/3 mx-auto'></input>
+                {/*                 <input type='text' onChange={handleChange} name="username" value={login.username} placeholder="Username"
+                    className='w-2/3 mx-auto'></input> */}
+                <Input type='text' onChange={handleChange} name="username" value={login.username} placeholder="Username" />
 
                 <label htmlFor="password">Password</label>
                 <input type='password' onChange={handleChange} name="password" value={login.password} placeholder="Password"
-                    className='w-2/3 mx-auto'></input>
+                    className='w-2/3 mx-auto '></input>
 
-                <button>
-                    Log In
-                </button>
+                <Button text="Log In" width={"w-[50%]"} my={"my-8"} />
             </form>
 
             <Link to={"/signup"} className='my-3 bg-primarydark rounded-lg w-[70%] mx-auto hover:bg-contrast'>

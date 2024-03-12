@@ -30,8 +30,9 @@ const Searchbar = () => {
                 <input type="text" onChange={handleChange} placeholder='Search for Product'
                     className='w-full h-8 text-center rounded-3xl my-3 shadow-md text-black outline-none' />
             </form>
+
             {search.length == 0 ? '' :
-                <div className='bg-slate-200 bg-opacity-90 absolute w-4/5 border-black border-2 rounded-lg p-3'>
+                <div className='bg-slate-200 bg-opacity-90 absolute w-4/5 border-black border-2 rounded-lg p-3 right-[10%]'>
                     <ul>
                         {filterSearch.map(prod => {
                             return <li key={prod.id}>
