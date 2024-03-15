@@ -7,6 +7,7 @@ import ProductCardSmall from '../components/ProductCardSmall.jsx'
 
 const ProductsPage = () => {
     const [products, setProducts] = useState([])
+    const categories = ["Baseball", "Jacket", "Suit", "Sportclothes", "Shoes", "Accessories", "Sportequipment"]
 
     useEffect(() => {
         const getProducts = async () => {
@@ -16,6 +17,10 @@ const ProductsPage = () => {
         }
         getProducts()
     }, [])
+
+    const filterProducts = (e) => {
+
+    }
 
     return (
         <div className='h-full w-full'>
@@ -28,6 +33,14 @@ const ProductsPage = () => {
                 <div className='w-full'>
                     <Searchbar />
 
+                    <div className='flex flex-row w-full h-10 m-2 justify-evenly'>
+                        {categories.map((item, index) => (
+                            <div onClick={filterProducts} key={index}
+                                className='bg-contrastdark p-2 rounded-2xl hover:bg-contrast hover:cursor-pointer '>
+                                {item}
+                            </div>
+                        ))}
+                    </div>
 
                     <div className='bg-gray-200 w-[90%] mx-auto h-screen'>
                         <h3>Products</h3>

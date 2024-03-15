@@ -42,9 +42,10 @@ const Navbar = () => {
     }, [])
 
     return (
-        <div className='sticky bg-primary h-20 w-full flex flex-row justify-between'>
+        <div className='sticky bg-primary h-24 w-full flex flex-row justify-between'>
             <Link to={'/shop'}>
-                <h1 className='my-2 ml-4 text-2xl w-[50%]'>Stuff n' Things</h1>
+                <h1 className='my-2 ml-4 text-3xl w-[50%] '>
+                    Stuff n' Things</h1>
             </Link>
 
             {user.username !== "" ?
@@ -71,7 +72,7 @@ const Navbar = () => {
                         </button>
                         {profileOpen ?
                             <div className='absolute top-full left-0 w-16 bg-slate-400'>
-                                <ProfileDropdown user={user} />
+                                <ProfileDropdown user={user.username} />
                             </div>
                             :
                             ''}

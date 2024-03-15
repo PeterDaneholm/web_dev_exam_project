@@ -6,7 +6,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 const Profile = () => {
     const { slug } = useParams()
     const navigate = useNavigate()
-    console.log(slug)
 
     useEffect(() => {
         const CheckLoggedIn = async () => {

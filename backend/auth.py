@@ -55,11 +55,11 @@ def authenticate_user(db, username:str, password: str):
 
 async def get_token_from_cookie(request: Request):
     token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not authenticate")
     if token.startswith("Bearer "):
         token = token[7:]
     print(f"dependcy cookie {token}")
-    if not token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not authenticate")
     return token
 
 async def get_current_user(

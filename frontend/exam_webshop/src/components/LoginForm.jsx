@@ -47,8 +47,13 @@ const LoginForm = () => {
                 <Input type='text' onChange={handleChange} name="username" value={login.username} placeholder="Username" />
 
                 <label htmlFor="password">Password</label>
-                <input type='password' onChange={handleChange} name="password" value={login.password} placeholder="Password"
-                    className='w-2/3 mx-auto '></input>
+                {/*                 <input type='password' onChange={handleChange} name="password" value={login.password} placeholder="Password"
+                    className='w-2/3 mx-auto '></input> */}
+
+                <Input type="password" onChange={handleChange} name='password' value={login.password}
+                    placeholder='Password'
+                />
+
 
                 <Button text="Log In" width={"w-[50%]"} my={"my-8"} />
             </form>

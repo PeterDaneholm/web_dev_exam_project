@@ -7,12 +7,13 @@ const Input = ({
     placeholder = "placeholder",
     width = "w-[70%]",
     bg = 'bg-white',
+    customClasses = "",
     onChange,
 }) => {
-    const baseClasses = 'mx-auto shadow-md rounded-lg text-center py-[2px]'
+    const baseClasses = 'mx-auto shadow-md rounded-lg text-center py-[3px]'
 
     return (
-        <input type={type} className={`${baseClasses} ${width} ${bg}`}
+        <input type={type} className={`${baseClasses} ${width} ${bg} ${customClasses}`}
             name={name} value={value} placeholder={placeholder} onChange={onChange} />
     )
 }
