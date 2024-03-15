@@ -39,7 +39,7 @@ class User(Base):
     password = Column(String(100))
     first_name = Column(String(50))
     last_name = Column(String(50))
-
+    orders = relationship('Order', back_populates='customer')
 
 class Product(Base):
     __tablename__ = 'products'
@@ -68,11 +68,11 @@ class Order(Base):
 
 
 OrderProducts = Table('orderproducts', Base.metadata,
-                    Column('order_id', VARCHAR(36), ForeignKey('products.id'), primary_key=True),
-                    Column('product_id', VARCHAR(36), ForeignKey('orders.id'), primary_key=True))
+                    Column('order_id', VARCHAR(36), ForeignKey('orders.id'), primary_key=True),
+                    Column('product_id', VARCHAR(36), ForeignKey('products.id'), primary_key=True))
 
 
-User.orders = relationship('Order', back_populates='customer')
+#User.orders = relationship('Order', back_populates='customer')
 Product.orders = relationship('Order', secondary='orderproducts', back_populates='products')
 
 

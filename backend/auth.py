@@ -59,7 +59,7 @@ async def get_token_from_cookie(request: Request):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not authenticate")
     if token.startswith("Bearer "):
         token = token[7:]
-    print(f"dependcy cookie {token}")
+    #print(f"dependcy cookie {token}")
     return token
 
 async def get_current_user(
@@ -72,10 +72,10 @@ async def get_current_user(
     else:
         authenticate_value = "Bearer"
     credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials", headers={"WWW-Authenticate": "Bearer"})
-    print(token)
+    #print(token)
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        print(f"payload {payload}")
+        #print(f"payload {payload}")
         token_data = TokenData(username=payload.get("sub"), scopes=payload.get("scopes", []))
         #username: str = payload.get("sub")
         #if username is None:
@@ -103,7 +103,7 @@ async def get_admin_user(admin_user: Annotated[User, Security(get_current_user, 
 
 def create_access_token(data:dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
-    print(f"encoding: {to_encode}")
+    #print(f"encoding: {to_encode}")
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:

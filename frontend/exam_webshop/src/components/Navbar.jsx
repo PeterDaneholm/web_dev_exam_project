@@ -42,7 +42,7 @@ const Navbar = () => {
     }, [])
 
     return (
-        <div className='sticky bg-primary h-24 w-full flex flex-row justify-between'>
+        <div className='sticky bg-primary h-24 w-full flex flex-row justify-between z-20'>
             <Link to={'/shop'}>
                 <h1 className='my-2 ml-4 text-3xl w-[50%] '>
                     Stuff n' Things</h1>
@@ -56,7 +56,8 @@ const Navbar = () => {
                             <FaCartShopping />
                             {cart.length == 0 ?
                                 "" :
-                                <div className='w-5 h-5 bg-red-500 rounded-xl absolute bottom-4 left-2'>{cart.length}</div>
+                                <div className='w-5 h-5 bg-red-500 rounded-xl absolute bottom-4 left-2'>
+                                    {cart.length}</div>
                             }
                         </button>
                         {productCartOpen ? <>

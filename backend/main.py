@@ -37,6 +37,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 models.Base.metadata.create_all(bind=engine)
 
 class ProductSize(BaseModel):
+    id: str
     size: str
     quantity: int
 
@@ -63,6 +64,14 @@ class UserBase(BaseModel):
     first_name: str
     last_name: str
     role: str
+    orders: Optional[List[OrderBase]] = []
+
+class UserResponse(BaseModel):
+    id: str
+    username: str
+    email_address: str
+    first_name: str
+    last_name: str
     orders: Optional[List[OrderBase]] = []
 
 class UpdateUser(UserBase):
@@ -162,7 +171,7 @@ async def read_current_user(user: UserBase = Depends(get_current_user)):
     return user
 
 #Get all users
-@app.get("/users/", response_model=List[UserBase])
+@app.get("/users/", response_model=List[UserResponse])
 async def get_users(db:db_dependency, 
                     request: Request,
                     current_user: Annotated[UserBase, Security(get_current_user, scopes=["Admin"])]
@@ -181,9 +190,11 @@ async def get_users(db:db_dependency,
                 detail="Not enough permissions",
                 headers={"WWW-Authenticate": "Bearer"}
             )
-        db_users = db.query(models.User).filter(models.User.role == 'user').all()
+        db_users = db.query(models.User).options(joinedload(models.User.orders))\
+            .filter(models.User.role == 'user').all()
         if db_users is None:
             raise HTTPException(status_code=404, detail="Users could not be found")
+        
         users_without_password = []
         for user in db_users:
             user_dict = user.__dict__
@@ -191,7 +202,7 @@ async def get_users(db:db_dependency,
             user_dict.pop('password', None)
             users_without_password.append(user_dict)
 
-        return users_without_password
+        return db_users
     except Exception as e:
         print(f"Error: {e}")
         raise
@@ -305,20 +316,19 @@ async def create_order(order: OrderBase,
                        db: db_dependency,
                        current_user: Annotated[UserBase, Security(get_current_user)]):
     print("order", order)
-
     products = db.query(models.Product).filter(models.Product.id.in_(order.products)).all()
 
     new_order = models.Order(products=products, customer_id=order.customer_id, total=order.total)
 
     #Need to update size quantity
-    #size = db.query(models.ProductSize).filter(models.ProductSize.id == new_order.products.size.id).first()
-    #print(size)
-    #size.quantity = size.quantity - 1
+    for i in order.products:
+        for size in i.size:
+            db.query(models.ProductSize).filter(models.ProductSize.id == size.id)\
+                .update({models.ProductSize.quantity: models.ProductSize.quantity - size.quantity})
 
-    #need to add orders to user's orders
     user = db.query(models.User).filter(models.User.id == order.customer_id).first()
     print(user)
-    #user.orders.append(new_order.id)
+    user.orders.append(new_order)
 
     db.add(new_order)
     db.commit()
@@ -328,7 +338,8 @@ async def create_order(order: OrderBase,
 @app.get("/orders/", response_model=List[OrderBase])
 async def get_orders(db: db_dependency,
                      current_user: Annotated[UserBase, Security(get_current_user, scopes=["Admin"])]):
-    db_orders = db.query(models.Order).all()
+    db_orders = db.query(models.Order)\
+        .options(joinedload((models.Order.products))).all()
     if db_orders is None:
         raise HTTPException(status_code=404, detail="Could not find any orders")
 
@@ -336,8 +347,12 @@ async def get_orders(db: db_dependency,
 
 #Get specific Order
 @app.get("/orders/{order_id}", status_code=status.HTTP_200_OK)
-async def get_order(order_id: str, db: db_dependency):
-    db_order = db.query(models.Order).filter(models.Order.id == order_id).first()
+async def get_order(order_id: str, 
+                    db: db_dependency,
+                    current_user: Annotated[UserBase, Depends(get_current_user)]):
+    
+    db_order = db.query(models.Order).options(joinedload(models.Order.products))\
+        .filter(models.Order.id == order_id).first()
     if db_order is None:
         raise HTTPException(status_code=404, detail="Could not find order with id: {order_id}")
     

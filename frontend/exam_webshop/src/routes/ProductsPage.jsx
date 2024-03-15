@@ -23,14 +23,10 @@ const ProductsPage = () => {
     }
 
     return (
-        <div className='h-full w-full'>
-            <div className='bg-orange-50 w-[90%] h-24 shadow-md mx-auto m-2'>
-                Banner here
-            </div>
-
+        <div className='h-full w-full z-10'>
             <div className='flex flex-row h-auto w-full'>
 
-                <div className='w-full'>
+                <div className='w-full pt-10'>
                     <Searchbar />
 
                     <div className='flex flex-row w-full h-10 m-2 justify-evenly'>

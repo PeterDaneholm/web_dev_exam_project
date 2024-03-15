@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom'
 
 const Admin = () => {
     const [users, setUsers] = useState([])
+    const [orders, setOrders] = useState([])
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -24,6 +25,15 @@ const Admin = () => {
             setUsers(response.data)
         }
         fetchUsers()
+
+        const getOrders = async () => {
+            const response = await api.get("/orders", {
+                withCredentials: true,
+            })
+            setOrders(response.data)
+        }
+        getOrders()
+
     }, [])
 
 
