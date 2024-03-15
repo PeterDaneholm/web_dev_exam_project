@@ -356,5 +356,9 @@ async def get_order(order_id: str,
     if db_order is None:
         raise HTTPException(status_code=404, detail="Could not find order with id: {order_id}")
     
-    return db_order
+    user = db.query(models.User).filter(models.User.id == db_order.customer_id).first()
+
+    order = {"products": db_order, "customer": user}
+    
+    return order
 
