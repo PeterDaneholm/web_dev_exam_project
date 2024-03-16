@@ -93,6 +93,11 @@ class UpdateProduct(ProductBase):
     category_id: str = None
     #user_rating: float = None
 
+class UpdateSize(BaseModel):
+    id: str = None
+    size: str = None
+    quantity: int = None
+
 
 #LOGIN
 @app.post("/login")
@@ -296,6 +301,22 @@ async def update_product(product_id: str, product: UpdateProduct, db: db_depende
     db.refresh(db_product)
 
     return db_product
+
+#Update Product quantities
+@app.put("/productquantity/{product_id}", status_code=status.HTTP_200_OK)
+async def update_quantity(product_size: List[UpdateSize],
+                          db: db_dependency,
+                          ):
+    for product in product_size:
+        db_product_size = db.query(models.ProductSize).filter(models.ProductSize.id == product.id).first()
+        if db_product_size is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found")
+        for field, value in product.model_dump(exclude_unset=True).items():
+            setattr(db_product_size, field, value)
+    
+        db.commit()
+        db.refresh(db_product_size)
+    return {"message": "Sizes updated correctly"}
 
 
 #Delete Product
