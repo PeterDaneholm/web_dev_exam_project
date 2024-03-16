@@ -34,18 +34,19 @@ const Admin = () => {
             })
             setOrders(response.data)
         }
-        const getUsers = async () => {
-            const response = await api.get("/users", {
+        const getProducts = async () => {
+            const response = await api.get("/products", {
                 withCredentials: true
             })
-            setUsers(response.data)
+            setProducts(response.data)
         }
 
         fetchUsers()
         getOrders()
-        getUsers()
+        getProducts()
 
     }, [])
+
 
     function isActive(page) {
         return activeSubPage === page ? "bg-contrastdark w-full " : ""
@@ -87,12 +88,13 @@ function Dashboard({ }) {
 function Products({ content }) {
     return <div>
         <h3>All Products</h3>
-        {content.map(item => <div>
+        {content.map(item => <div key={item.id}>
             {item.name}
 
-            <p>
+            <Link to={`product/${item.id}`}>
                 <MdEditSquare />
-            </p>
+            </Link>
+
         </div>)}
     </div>
 }
@@ -101,13 +103,13 @@ function Users({ content }) {
         <h3>Total Users</h3>
         <h4>{content.length}</h4>
 
-        <p>
+        <div>
             {content.map((item) => (
                 <div key={item.id}>
                     {item.username}
                 </div>
             ))}
-        </p>
+        </div>
 
     </div>
 }

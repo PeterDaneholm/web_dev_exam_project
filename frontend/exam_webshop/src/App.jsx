@@ -12,6 +12,7 @@ import Profile from './routes/Profile';
 import CartProvider from './components/CartContext';
 import Signout from './routes/Signout';
 import Checkout from './routes/Checkout';
+import AdminEdit from './routes/AdminEdit';
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
           <Route path="/profile/:slug" element={<Profile />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin/uploadproduct" element={<AdminProduct />} />
+          <Route path="/admin/product/:id" element={<AdminEdit />} />
         </Routes>
       </CartProvider>
 
