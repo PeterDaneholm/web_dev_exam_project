@@ -4,6 +4,7 @@ import api from '../api'
 import { useParams } from 'react-router-dom'
 import { CartContext } from '../components/CartContext'
 import { useNavigate } from 'react-router-dom'
+import { useToast } from '../components/Toast/ToastContext'
 
 
 const ProductPage = () => {
@@ -12,6 +13,7 @@ const ProductPage = () => {
     const { id } = useParams();
     const { addToCart } = useContext(CartContext);
     const navigate = useNavigate()
+    const { showToast } = useToast()
 
     useEffect(() => {
         const getProduct = async () => {
@@ -30,7 +32,7 @@ const ProductPage = () => {
         console.log(toCart)
         addToCart(toCart)
         navigate("/shop")
-
+        showToast('Added to Cart', 'success')
     }
 
     return (

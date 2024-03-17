@@ -13,28 +13,31 @@ import CartProvider from './components/CartContext';
 import Signout from './routes/Signout';
 import Checkout from './routes/Checkout';
 import AdminEdit from './routes/AdminEdit';
+import { ToastProvider } from './components/Toast/ToastContext';
 
 
 function App() {
 
   return (
     <>
-      <CartProvider>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signout" element={<Signout />} />
-          <Route path="/shop" element={<ProductsPage />} />
-          <Route path="/shop/:id" element={<ProductPage />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/profile/:slug" element={<Profile />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin/uploadproduct" element={<AdminProduct />} />
-          <Route path="/admin/product/:id" element={<AdminEdit />} />
-        </Routes>
-      </CartProvider>
+      <ToastProvider>
+        <CartProvider>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signout" element={<Signout />} />
+            <Route path="/shop" element={<ProductsPage />} />
+            <Route path="/shop/:id" element={<ProductPage />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/profile/:slug" element={<Profile />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/uploadproduct" element={<AdminProduct />} />
+            <Route path="/admin/product/:id" element={<AdminEdit />} />
+          </Routes>
+        </CartProvider>
+      </ToastProvider>
 
     </>
   )
