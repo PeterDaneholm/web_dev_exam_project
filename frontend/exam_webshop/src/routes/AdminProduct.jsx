@@ -56,7 +56,8 @@ const AdminProduct = () => {
             formData.size = formData.size.map((item) => {
                 return {
                     ...item,
-                    quantity: parseInt(item.quantity)
+                    quantity: parseInt(item.quantity),
+                    id: uuidv4()
                 }
             })
         }

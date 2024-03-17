@@ -74,6 +74,14 @@ class UserResponse(BaseModel):
     last_name: str
     orders: Optional[List[OrderBase]] = []
 
+class OrderResponse(OrderBase):
+    products: List[ProductBase] = []
+    total: float
+    customer: UserResponse
+    customer_id: str
+    order_date: date
+    id: str
+
 class UpdateUser(UserBase):
     id: str = None
     email_address: str = None
@@ -336,13 +344,14 @@ async def delete_product(product_id: str, db: db_dependency):
 async def create_order(order: OrderBase, 
                        db: db_dependency,
                        current_user: Annotated[UserBase, Security(get_current_user)]):
-    print("order", order)
-    products = db.query(models.Product).filter(models.Product.id.in_(order.products)).all()
 
+    products = db.query(models.Product).filter(models.Product.id.in_(order.products)).all()
     new_order = models.Order(products=products, customer_id=order.customer_id, total=order.total)
+    new_order.products = products
 
     #Need to update size quantity
     for i in order.products:
+        product = db.query(models.Product).get(i.id)
         for size in i.size:
             db.query(models.ProductSize).filter(models.ProductSize.id == size.id)\
                 .update({models.ProductSize.quantity: models.ProductSize.quantity - size.quantity})
@@ -356,15 +365,42 @@ async def create_order(order: OrderBase,
     return new_order
 
 #Get all Orders
-@app.get("/orders/", response_model=List[OrderBase])
+@app.get("/orders/", response_model=List[OrderResponse])
 async def get_orders(db: db_dependency,
                      current_user: Annotated[UserBase, Security(get_current_user, scopes=["Admin"])]):
-    db_orders = db.query(models.Order)\
-        .options(joinedload((models.Order.products))).all()
+    db_orders = db.query(models.Order).options(joinedload(models.Order.products), joinedload(models.Order.customer)).all()
     if db_orders is None:
         raise HTTPException(status_code=404, detail="Could not find any orders")
 
-    return db_orders
+    response_orders = [OrderResponse(
+        id= order.id,
+        products=[ProductBase(
+            id=product.id,
+            name=product.name,
+            price=product.price,
+            description = product.description,
+            on_sale=product.on_sale,
+            size=[ProductSize(
+                id=size.id,
+                quantity=size.quantity,
+                size=size.size
+            ) for size in product.size],
+            category_id=product.category_id,
+            image_id=product.image_id
+        ) for product in order.products],
+        customer=UserResponse(
+            id=order.customer_id,
+            username=order.customer.username,
+            first_name=order.customer.first_name,
+            last_name=order.customer.last_name,
+            email_address=order.customer.email_address,
+        ),
+        customer_id=order.customer_id,
+        order_date=order.order_date,
+        total=order.total
+    ) for order in db_orders]
+
+    return response_orders
 
 #Get specific Order
 @app.get("/orders/{order_id}", status_code=status.HTTP_200_OK)

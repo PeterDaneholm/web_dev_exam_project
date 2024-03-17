@@ -60,7 +60,7 @@ class Order(Base):
     __tablename__ = 'orders'
 
     id = Column(VARCHAR(36), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    products = relationship('Product', secondary='orderproducts')
+    products = relationship('Product', secondary='orderproducts', back_populates='orders')
     customer_id = Column(VARCHAR(36), ForeignKey('users.id'))
     customer = relationship('User', back_populates='orders')
     order_date = Column(Date, default=datetime.datetime.now)
