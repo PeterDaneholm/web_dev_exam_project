@@ -7,6 +7,7 @@ import ProductCardSmall from '../components/ProductCardSmall.jsx'
 
 const ProductsPage = () => {
     const [products, setProducts] = useState([])
+    const [filteredProducts, setFilteredProducts] = useState([])
     const categories = ["Baseball", "Jacket", "Suit", "Sportclothes", "Shoes", "Accessories", "Sportequipment"]
 
     useEffect(() => {
@@ -18,8 +19,11 @@ const ProductsPage = () => {
         getProducts()
     }, [])
 
-    const filterProducts = (e) => {
-
+    const filterProducts = (productList, category) => {
+        const filtered = productList.filter((prod) => (
+            prod.category_id.includes(category.toLowerCase())
+        ))
+        setFilteredProducts(filtered)
     }
 
     return (
@@ -31,7 +35,7 @@ const ProductsPage = () => {
 
                     <div className='flex flex-row w-full h-10 m-2 justify-evenly'>
                         {categories.map((item, index) => (
-                            <div onClick={filterProducts} key={index}
+                            <div onClick={() => filterProducts(products, item)} key={index}
                                 className='bg-contrastdark p-2 rounded-2xl hover:bg-contrast hover:cursor-pointer '>
                                 {item}
                             </div>
@@ -41,11 +45,22 @@ const ProductsPage = () => {
                     <div className='bg-gray-200 w-[90%] mx-auto h-screen'>
                         <h3>Products</h3>
                         <ul className='flex flex-row flex-wrap'>
-                            {products.map((prod) => {
-                                return (
-                                    <li key={prod.id}><ProductCardSmall {...prod} /></li>
-                                )
-                            })}
+                            {filteredProducts.length == 0 ?
+                                <>
+                                    {products.map((prod) => {
+                                        return (
+                                            <li key={prod.id}><ProductCardSmall {...prod} /></li>
+                                        )
+                                    })}
+                                </>
+                                : <>
+                                    {filteredProducts.map((prod) => {
+                                        return (
+                                            <li key={prod.id}><ProductCardSmall {...prod} /></li>
+                                        )
+                                    })}
+                                </>
+                            }
                         </ul>
                     </div>
 
