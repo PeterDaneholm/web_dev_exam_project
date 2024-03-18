@@ -23,15 +23,45 @@ const Profile = () => {
         }
         CheckLoggedIn()
     }, [])
+    console.log(user)
 
     return (
         <>
             {user &&
                 <div>
-                    <h2>Welcome back {user.username}</h2>
-                    Profile view
+                    <h2 className='text-2xl font-bold m-2'>Welcome back {user.username}</h2>
 
-                    <p></p>
+                    <div className='flex flex-col m-2'>
+                        <h3 className='text-xl font-bold'>Your details</h3>
+                        <p>Username: {user.username}</p>
+                        <p>First name: {user.first_name}</p>
+                        <p>Last name: {user.last_name}</p>
+                        <p>Email: {user.email_address}</p>
+                    </div>
+
+                    <div className='flex flex-col m-2'>
+                        <h3 className='text-xl font-bold'>Your orders</h3>
+                        <p>Total Orders: {user.orders.length}</p>
+                        <div>
+                            {user.orders.map((order, index) => {
+                                return <div key={index}>
+                                    Total: {order.total}
+                                    Order date: {order.order_date}
+                                    {/* Order_date is not being returned with the order through the user. */}
+                                    Items:
+                                    {/*                                     <ul>
+                                        {order.items.map((item, index) => {
+                                            return <li key={index}>
+                                                Name: {item.name}
+                                                Size: {item.size}
+                                                Quantity: {item.quantity}
+                                            </li>
+                                        })}
+                                    </ul> */}
+                                </div>
+                            })}
+                        </div>
+                    </div>
                 </div>
             }
         </>
