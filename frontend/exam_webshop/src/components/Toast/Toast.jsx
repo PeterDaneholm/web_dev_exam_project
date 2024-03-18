@@ -31,7 +31,7 @@ const Toast = ({ label, status, closeToast }) => {
 
     return (
         <div className={`${bgColor(status)} bg-opacity-90
-        absolute w-56 h-12 rounded-md text-lg my-auto flex items-center float-left top-36 right-12 z-20 border-2 border-gray-500 animate-fade-in-out`}
+        absolute w-auto h-18 rounded-md text-lg my-auto p-3 flex items-center float-left top-36 right-12 z-20 border-2 border-gray-500 animate-fade-in-out`}
         >
             <span className='ml-2'>{icon}</span>
             <span className='ml-4'>{label}</span>

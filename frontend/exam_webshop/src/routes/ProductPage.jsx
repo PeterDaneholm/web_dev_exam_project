@@ -27,12 +27,15 @@ const ProductPage = () => {
     }, [id])
 
     const AddProduct = (e) => {
-
-        const toCart = { ...product, size: [currentSize] }
-        console.log(toCart)
-        addToCart(toCart)
-        navigate("/shop")
-        showToast('Added to Cart', 'success')
+        if (currentSize.quantity === 0) {
+            showToast("Could not add since it's sold out", 'warning')
+        } else {
+            const toCart = { ...product, size: [currentSize] }
+            console.log(toCart)
+            addToCart(toCart)
+            navigate("/shop")
+            showToast('Added to Cart', 'success')
+        }
     }
 
     return (
