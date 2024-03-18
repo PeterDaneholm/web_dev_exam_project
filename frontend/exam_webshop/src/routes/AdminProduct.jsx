@@ -74,37 +74,27 @@ const AdminProduct = () => {
 
             <form onSubmit={handleSubmit} className='bg-gray-200 flex flex-col w-[90%] p-2 rounded-lg m-2'>
                 <label htmlFor="name">Name of Product</label>
-                <input type="text" name='name' onChange={handleChange} value={newProduct.name} />
                 <Input type='text' name='name' onChange={handleChange} value={newProduct.name} />
 
                 <label htmlFor="description">Description of Product</label>
-                <input type="text" name='description' onChange={handleChange} value={newProduct.description} />
                 <Input type='text' name='description' onChange={handleChange} value={newProduct.description} />
 
                 <label htmlFor="price">Price of Product</label>
-                <input type="number" name='price' onChange={handleChange} value={newProduct.price} />
                 <Input type='text' name='price' onChange={handleChange} value={newProduct.price} />
 
                 <label htmlFor="category_id">Category of Product</label>
-                <input type="text" name='category_id' onChange={handleChange} value={newProduct.category_id} />
                 <Input type='text' name='category_id' onChange={handleChange} value={newProduct.category_id} />
 
                 <label htmlFor="size">Size of Product</label>
-                <input type="text" name='size' onChange={handleSizeChange} value={size.size} />
-                <Input type='text' name='size' onChange={handleChange} value={newProduct.size} />
+                <Input type='text' name='size' onChange={handleChange} value={size.size} />
 
                 <label htmlFor="quantity">Quantity of Product</label>
-                <input type="number" name='quantity' onChange={handleSizeChange} value={size.quantity} />
-                <Input type='text' name='quantity' onChange={handleChange} value={newProduct.quantity} />
+                <Input type='number' name='quantity' onChange={handleChange} value={size.quantity} />
 
-                <button>Submit</button>
                 <Button text='Add Product' />
             </form>
 
             <Button text="Add Size" onClick={addSize} />
-            <button onClick={addSize}>
-                Add size
-            </button>
         </div>
     )
 }

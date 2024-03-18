@@ -2,6 +2,7 @@ import React from 'react'
 import { useContext, useState, useEffect } from 'react'
 import { CartContext } from './CartContext'
 import { Link } from 'react-router-dom'
+import Button from './basicelements/Button'
 
 const ProductCart = ({ user }) => {
     const { cart, removeFromCart } = useContext(CartContext)
@@ -13,6 +14,7 @@ const ProductCart = ({ user }) => {
                     className='border-b-2 w-full ' >
                     {item.name}
                     {item.price}
+                    <Button key={index} text="Remove" onClick={() => removeFromCart(item)} width='w-full' />
                 </div>
             )}
 

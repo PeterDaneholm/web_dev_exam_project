@@ -42,14 +42,9 @@ const LoginForm = () => {
                 <div className='h-[1px] bg-gray-800 rounded-md w-[90%] self-center justify-center'></div>
 
                 <label htmlFor="username">Username</label>
-                {/*                 <input type='text' onChange={handleChange} name="username" value={login.username} placeholder="Username"
-                    className='w-2/3 mx-auto'></input> */}
                 <Input type='text' onChange={handleChange} name="username" value={login.username} placeholder="Username" />
 
                 <label htmlFor="password">Password</label>
-                {/*                 <input type='password' onChange={handleChange} name="password" value={login.password} placeholder="Password"
-                    className='w-2/3 mx-auto '></input> */}
-
                 <Input type="password" onChange={handleChange} name='password' value={login.password}
                     placeholder='Password'
                 />
