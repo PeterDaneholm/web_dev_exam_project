@@ -4,12 +4,16 @@ import { useContext, useEffect, useState } from 'react'
 import api from '../api'
 import { useNavigate } from 'react-router-dom'
 import { isUserLoggedIn } from '../utilities/get_user'
+import { useToast } from '../components/Toast/ToastContext'
+import Button from '../components/basicelements/Button'
+
 
 
 const Checkout = () => {
     const { cart, removeFromCart, addUser } = useContext(CartContext)
     const [user, setUser] = useState("")
     const navigate = useNavigate()
+    const { showToast } = useToast()
     console.log("cart", cart)
 
     useEffect(() => {
@@ -46,6 +50,11 @@ const Checkout = () => {
                 withCredentials: true,
             })
         console.log(response)
+        if (response.status === 200) {
+            showToast('Order placed', 'success')
+        } else {
+            showToast('Could not place order', 'fail')
+        }
         cart.forEach(item => {
             removeFromCart(item)
         });
@@ -67,14 +76,11 @@ const Checkout = () => {
 
                             <h4></h4>
 
-                            <button onClick={() => removeFromCart(item)}>
-                                Remove from cart</button>
+                            <Button text='Remove from Cart' onClick={() => removeFromCart(item)} />
                         </div>
                     )}
 
-                    <button onClick={handleSubmit}>
-                        Make the Order!
-                    </button>
+                    <Button text='Make the Order!' onClick={handleSubmit} />
                 </div>
             }
 
