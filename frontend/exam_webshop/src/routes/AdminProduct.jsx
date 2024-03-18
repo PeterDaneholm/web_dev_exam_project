@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react'
 import api from '../api'
 import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
-import Cookies from 'js-cookie'
 import { onAdminRouteLoad } from '../utilities/get_user'
+import Button from '../components/basicelements/Button'
+import Input from '../components/basicelements/Input'
 
 const AdminProduct = () => {
     const [newProduct, setNewProduct] = useState({
@@ -46,8 +47,7 @@ const AdminProduct = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const token = Cookies.get('token')
-        console.log("token", token)
+
         let formData = { ...newProduct, id: uuidv4(), on_sale: false }
         if (formData.price) {
             formData.price = parseInt(formData.price)
@@ -63,10 +63,7 @@ const AdminProduct = () => {
         }
         //console.log("Product data to request", formData)
         const response = await api.post("/products", formData, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            allowCredentials: true,
+            withCredentials: true,
         })
         //console.log("Response: ", response)
         navigate("/admin")
@@ -78,25 +75,33 @@ const AdminProduct = () => {
             <form onSubmit={handleSubmit} className='bg-gray-200 flex flex-col w-[90%] p-2 rounded-lg m-2'>
                 <label htmlFor="name">Name of Product</label>
                 <input type="text" name='name' onChange={handleChange} value={newProduct.name} />
+                <Input type='text' name='name' onChange={handleChange} value={newProduct.name} />
 
                 <label htmlFor="description">Description of Product</label>
                 <input type="text" name='description' onChange={handleChange} value={newProduct.description} />
+                <Input type='text' name='description' onChange={handleChange} value={newProduct.description} />
 
                 <label htmlFor="price">Price of Product</label>
                 <input type="number" name='price' onChange={handleChange} value={newProduct.price} />
+                <Input type='text' name='price' onChange={handleChange} value={newProduct.price} />
 
                 <label htmlFor="category_id">Category of Product</label>
                 <input type="text" name='category_id' onChange={handleChange} value={newProduct.category_id} />
+                <Input type='text' name='category_id' onChange={handleChange} value={newProduct.category_id} />
 
                 <label htmlFor="size">Size of Product</label>
                 <input type="text" name='size' onChange={handleSizeChange} value={size.size} />
+                <Input type='text' name='size' onChange={handleChange} value={newProduct.size} />
 
                 <label htmlFor="quantity">Quantity of Product</label>
                 <input type="number" name='quantity' onChange={handleSizeChange} value={size.quantity} />
+                <Input type='text' name='quantity' onChange={handleChange} value={newProduct.quantity} />
 
                 <button>Submit</button>
+                <Button text='Add Product' />
             </form>
 
+            <Button text="Add Size" onClick={addSize} />
             <button onClick={addSize}>
                 Add size
             </button>

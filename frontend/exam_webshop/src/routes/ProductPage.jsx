@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import { CartContext } from '../components/CartContext'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '../components/Toast/ToastContext'
+import Button from '../components/basicelements/Button'
 
 
 const ProductPage = () => {
@@ -46,12 +47,12 @@ const ProductPage = () => {
 
             <div>
                 {product.size && Object.values(product.size).map((item) =>
-                    <button onClick={() => setCurrentSize(item)}
-                        key={item.id}>{item.size}: {item.quantity} in stock</button>
+                    <Button onClick={() => setCurrentSize(item)}
+                        key={item.id} text={`${item.size}: ${item.quantity} in stock`} />
                 )}
             </div>
 
-            <button onClick={AddProduct}>Add to Cart</button>
+            <Button text="Add to Cart" onClick={AddProduct} />
         </div>
     )
 }

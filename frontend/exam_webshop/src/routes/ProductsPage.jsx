@@ -8,7 +8,7 @@ import ProductCardSmall from '../components/ProductCardSmall.jsx'
 const ProductsPage = () => {
     const [products, setProducts] = useState([])
     const [filteredProducts, setFilteredProducts] = useState([])
-    const categories = ["Baseball", "Jacket", "Suit", "Sportclothes", "Shoes", "Accessories", "Sportequipment"]
+    const categories = ["Baseball", "Jacket", "Suit", "Sportclothes", "Shoes", "Accessories", "Sport Equipment"]
 
     useEffect(() => {
         const getProducts = async () => {
