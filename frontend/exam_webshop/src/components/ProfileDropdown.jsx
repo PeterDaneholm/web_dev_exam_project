@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 const ProfileDropdown = ({ user }) => {
 
     return (
-        <div className='flex flex-col'>
+        <div className='flex flex-col p-1 shadow-inner'>
             <Link to={`/profile/${user}`}>
                 Profile
             </Link>

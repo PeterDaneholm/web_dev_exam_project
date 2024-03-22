@@ -28,7 +28,7 @@ const Searchbar = () => {
         <div className='relative'>
             <form className='h-auto'>
                 <input type="text" onChange={handleChange} placeholder='Search for Product'
-                    className='w-full h-8 text-center rounded-3xl my-3 shadow-md text-black outline-none' />
+                    className='w-[90%] mx-[5%] h-8 text-center rounded-3xl my-3 shadow-md text-black outline-none' />
             </form>
 
             {search.length == 0 ? '' :

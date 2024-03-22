@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import React from 'react'
-import LoginForm from '../components/LoginForm'
+import LoginForm from '../components/Forms/LoginForm'
 import alreadyLogin from '../utilities/redirect_functions'
 import { useNavigate } from 'react-router-dom'
 

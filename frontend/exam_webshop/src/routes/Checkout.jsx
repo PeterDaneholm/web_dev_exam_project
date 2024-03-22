@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { isUserLoggedIn } from '../utilities/get_user'
 import { useToast } from '../components/Toast/ToastContext'
 import Button from '../components/basicelements/Button'
+import CheckOutModal from '../components/CheckOutModal'
 
 
 
@@ -81,6 +82,8 @@ const Checkout = () => {
                     )}
 
                     <Button text='Make the Order!' onClick={handleSubmit} />
+
+                    <CheckOutModal />
                 </div>
             }
 

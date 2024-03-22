@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import api from '../api'
+import api from '../../api'
 import { Link, useNavigate } from 'react-router-dom'
-import Button from './basicelements/Button'
-import Input from './basicelements/Input'
+import Button from '../basicelements/Button'
+import Input from '../basicelements/Input'
 
 
 const LoginForm = () => {

@@ -59,13 +59,13 @@ const Admin = () => {
             <div className='bg-primary sticky h-[66%] w-44 mr-4 gap-4 rounded-b-2xl'>
 
                 <ul className='mt-12 gap-2 grid text-xl'>
-                    <li className={`${isActive("dashboard")} pl-2 hover:cursor-pointer hover:bg-contrast`} onClick={() => setActiveSubPage('dashboard')}>
+                    <li className={`${isActive("dashboard")} pl-2 py-1 hover:cursor-pointer hover:bg-contrast`} onClick={() => setActiveSubPage('dashboard')}>
                         <MdOutlineDashboard className='inline' /> Dashboard</li>
-                    <li className={`${isActive("products")} pl-2 hover:cursor-pointer hover:bg-contrast`} onClick={() => setActiveSubPage("products")}>
+                    <li className={`${isActive("products")} pl-2 py-1 hover:cursor-pointer hover:bg-contrast`} onClick={() => setActiveSubPage("products")}>
                         <FaBasketShopping className='inline' /> Products</li>
-                    <li className={`${isActive("orders")} pl-2 hover:cursor-pointer hover:bg-contrast`} onClick={() => { setActiveSubPage("orders") }}>
+                    <li className={`${isActive("orders")} pl-2 py-1 hover:cursor-pointer hover:bg-contrast`} onClick={() => { setActiveSubPage("orders") }}>
                         <RiBillLine className='inline' /> Orders</li>
-                    <li className={`${isActive("users")} pl-2 hover:cursor-pointer hover:bg-contrast`} onClick={() => setActiveSubPage("users")}>
+                    <li className={`${isActive("users")} pl-2 py-1 hover:cursor-pointer hover:bg-contrast`} onClick={() => setActiveSubPage("users")}>
                         <FaUsers className='inline' /> Users</li>
                     <li className='pl-2 mt-5 hover:bg-contrast'>
                         <Link to={"uploadproduct"}>Upload New Product</Link>

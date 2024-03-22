@@ -8,7 +8,7 @@ const ProductCart = ({ user }) => {
     const { cart, removeFromCart } = useContext(CartContext)
 
     return (
-        <div className='absolute bg-slate-100 flex flex-col h-44 p-2 w-auto gap-2 z-50'>
+        <div className='absolute right-0 bg-contrast flex flex-col h-auto p-2 px-4 w-auto gap-2 z-50 rounded-md shadow-md '>
             {cart.map((item, index) =>
                 <div key={index}
                     className='border-b-2 w-full ' >
@@ -20,7 +20,7 @@ const ProductCart = ({ user }) => {
 
             <h4>Total:</h4>
 
-            <Link to={"/checkout"}>
+            <Link to={"/checkout"} className='rounded-lg bg-white border-[2px] border-gray-300 py-1 px-2 shadow-sm hover:bg-gray-300'>
                 Checkout
             </Link>
         </div>

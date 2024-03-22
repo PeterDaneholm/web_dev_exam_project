@@ -72,7 +72,7 @@ const Navbar = () => {
                             <FaRegUserCircle />
                         </button>
                         {profileOpen ?
-                            <div className='absolute top-full left-0 w-16 bg-slate-400'>
+                            <div className='absolute right-0 top-full w-20 h-auto rounded-md bg-contrast'>
                                 <ProfileDropdown user={user.username} />
                             </div>
                             :
