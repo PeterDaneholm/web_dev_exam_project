@@ -6,10 +6,17 @@ import CheckoutPayment from './Forms/CheckoutPayment'
 
 const CheckOutModal = () => {
     const [delivery, setDelivery] = useState({
-
+        street_name: "",
+        street_number: 0,
+        city: "",
+        country: "",
+        zip_code: "",
     })
     const [payment, setPayment] = useState({
-
+        card_number: "",
+        expiration_date: "",
+        security_digits: "",
+        card_name: "",
     })
 
     const [currentCheckout, setCurrentCheckout] = useState('delivery')
@@ -17,27 +24,26 @@ const CheckOutModal = () => {
         currentCheckout === 'delivery' ? setCurrentCheckout('payment') : setCurrentCheckout('delivery')
     }
 
-    const submitDelivery = () => {
-
-    }
-
-    const submitPayment = () => {
+    const handleCheckOut = (e) => {
+        e.preventDefault();
 
     }
 
     return (
-        <div>
+        <div className='w-3/4 h-3/4 rounded-md shadow-lg'>
             {currentCheckout === 'delivery' ?
-                <div>
-                    <CheckoutDelivery />
+                <>
+                    <CheckoutDelivery delivery={delivery} setDelivery={setDelivery} />
                     <button onClick={changeLayout}>Switch</button>
-                </div>
+                </>
                 :
-                <div>
+                <>
                     <CheckoutPayment />
                     <button onClick={changeLayout}>Switch</button>
-                </div>
+                </>
             }
+
+            <Button onClick={handleCheckOut} />
 
         </div>
     )
