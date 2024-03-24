@@ -34,6 +34,9 @@ const LoginForm = () => {
         }
     }
 
+    const resetPassword = () => {
+
+    }
 
     return (
         <div className='flex rounded-md w-4/5 h-auto flex-col text-center gap-2 bg-primary p-2 m-2 mx-auto self-center'>
@@ -52,6 +55,8 @@ const LoginForm = () => {
 
                 <Button text="Log In" width={"w-[50%]"} my={"my-8"} />
             </form>
+
+            <Button text='Forgot your password?' onClick={resetPassword} />
 
             <Link to={"/signup"} className='my-3 bg-primarydark rounded-lg w-[70%] mx-auto hover:bg-contrast'>
                 Don't have an account? Sign up here!

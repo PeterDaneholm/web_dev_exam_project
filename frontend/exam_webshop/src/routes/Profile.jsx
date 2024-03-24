@@ -2,15 +2,21 @@ import React, { useState } from 'react'
 import { useEffect } from 'react'
 import api from '../api'
 import { useNavigate, useParams } from 'react-router-dom'
+import Button from '../components/basicelements/Button'
+import Input from '../components/basicelements/Input'
 
 const Profile = () => {
     const { slug } = useParams()
     const [user, setUser] = useState()
+    const [newPassword, setNewPassword] = useState({
+        password: "",
+        validatePassword: ""
+    })
     const navigate = useNavigate()
 
     useEffect(() => {
         const CheckLoggedIn = async () => {
-            const response = await api.get("/users/me", {
+            const response = await api.get(`/users/${slug}`, {
                 withCredentials: true
             })
             if (slug === response.data.username) {
@@ -24,6 +30,11 @@ const Profile = () => {
         CheckLoggedIn()
     }, [])
     console.log(user)
+
+    const handlePasswordSubmit = (e) => {
+        e.preventDefault();
+
+    }
 
     return (
         <>
@@ -39,6 +50,15 @@ const Profile = () => {
                         <p>Email: {user.email_address}</p>
                     </div>
 
+                    <div>
+                        <h3>Change Password</h3>
+                        <form onSubmit={handlePasswordSubmit} className='gap-2'>
+                            <Input type="password" placeholder='Enter New Password' value={newPassword.password} onChange={() => setNewPassword(e.target.value)} />
+                            <Input type="password" placeholder='Validate Password' value={newPassword.validatePassword} onChange={() => setNewPassword(e.target.value)} />
+                            <Button text='Change your password' />
+                        </form>
+                    </div>
+
                     <div className='flex flex-col m-2'>
                         <h3 className='text-xl font-bold'>Your orders</h3>
                         <p>Total Orders: {user.orders.length}</p>
@@ -47,17 +67,7 @@ const Profile = () => {
                                 return <div key={index}>
                                     Total: {order.total}
                                     Order date: {order.order_date}
-                                    {/* Order_date is not being returned with the order through the user. */}
-                                    Items:
-                                    {/*                                     <ul>
-                                        {order.items.map((item, index) => {
-                                            return <li key={index}>
-                                                Name: {item.name}
-                                                Size: {item.size}
-                                                Quantity: {item.quantity}
-                                            </li>
-                                        })}
-                                    </ul> */}
+
                                 </div>
                             })}
                         </div>

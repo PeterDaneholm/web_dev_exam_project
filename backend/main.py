@@ -4,6 +4,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import Annotated, List, Optional
 from sqlalchemy.orm import Session, joinedload
 from pydantic import BaseModel
+import datetime
 from datetime import date, timedelta
 from database import engine, SessionLocal
 from jose import JWTError, jwt
@@ -107,6 +108,8 @@ class UpdateSize(BaseModel):
     quantity: int = None
 
 
+#ROUTES
+
 #LOGIN
 @app.post("/login")
 async def create_access_token_from_login(
@@ -127,28 +130,6 @@ async def create_access_token_from_login(
     print(response.headers)
     return {"access_token": access_token, "token_type": "bearer"}
 
-#LOGIN
-#@app.post("/login/")
-#async def create_access_from_login(response: Response, 
-#                                   form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
-#                                   db: db_dependency):
-#    user = authenticate_user(db, form_data.username, form_data.password)
-#    if not user:
-#        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"})
-#    access_token_expires = timedelta(minutes=60)
-#    access_token = create_access_token(data={"sub": user.username, "scopes": user.role}, expires_delta=access_token_expires)
-#    print("Token: " + access_token)
-#    response.set_cookie(key="access_token", 
-#                        value=f"Bearer {access_token}", 
-#                        httponly=True,
-#                        #samesite=True,
-#                        #secure=True,
-#                        #domain="localhost:8000",
-#                        )
-#    print(response.headers)
-#    return {"access_token": access_token, "token_type": "bearer"}
-#    #return Token(access_token=access_token, token_type="bearer")
-
 
 #LOGOUT
 @app.post("/logout")
@@ -162,6 +143,13 @@ async def logout(response: Response ):
 async def check_token(current_user: Annotated[UserBase, Depends(get_current_user)]):
     return current_user
 
+@app.post("/password-reset/{email}")
+async def password_reset(email: str, db: db_dependency):
+    user = db.query(models.User).filter(models.User.email_address == email).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    password_reset_token = jwt.encode({"sub": user.username, "exp": datetime + timedelta(minutes=15)}, SECRET_KEY, algorithm=ALGORITHM)
+    return {"message": "Password reset email sent"}
 
 #USER ROUTES
 #Create user
@@ -223,11 +211,10 @@ async def get_users(db:db_dependency,
 #Get specific user
 @app.get("/users/{user_id}", status_code=status.HTTP_200_OK)
 async def get_user(user_id: str, db: db_dependency):
-    db_user = db.query(models.User).options(joinedload(models.User.orders)).filter(models.User.id == user_id).first()
+    db_user = db.query(models.User).options(joinedload(models.User.orders)).filter(models.User.username == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     #Validate that the username is the same as the token
-
 
     return db_user
 
