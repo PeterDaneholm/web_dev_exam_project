@@ -9,7 +9,7 @@ from datetime import date, timedelta
 from database import engine, SessionLocal
 from jose import JWTError, jwt
 import models
-from auth import get_current_user, get_admin_user, authenticate_user, create_access_token, Token, oath2_scheme
+from auth import get_current_user, verify_password, authenticate_user, create_access_token, Token, oath2_scheme
 from database import db_dependency, get_db
 from passlib.context import CryptContext
 from dotenv import load_dotenv
@@ -91,6 +91,12 @@ class UpdateUser(UserBase):
     last_name: str = None
     password: str = None
     role: str = 'user'
+
+class UpdateUserPassword(BaseModel):
+    id: str = None
+    username: str = None
+    old_password: str = None
+    new_password: str = None
 
 class UpdateProduct(ProductBase):
     id: str = None
@@ -232,6 +238,25 @@ async def update_user(user_id: str, user: UpdateUser, db: db_dependency):
     db.refresh(db_user)
 
     return db_user
+
+#Update Password
+@app.put("/users/{user_id}/change-password", status_code=status.HTTP_200_OK)
+async def change_password(user_id: str, 
+                          data: UpdateUserPassword, 
+                          db: db_dependency,
+                          current_user: Annotated[UserBase, Security(get_current_user)]):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if db_user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    
+    if not verify_password(data.old_password, db_user.password):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Old password was not correct")
+
+    new_hashed = pwd_context.hash(data.new_password)
+    db_user.password = new_hashed
+    db.commit()
+    db.refresh(db_user)
+    return {"message": f"Password updated for user {db_user.username}"}
 
 #Delete user
 @app.delete("/users/{id}", status_code=status.HTTP_200_OK)

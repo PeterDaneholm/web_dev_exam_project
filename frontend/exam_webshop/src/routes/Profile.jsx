@@ -9,8 +9,9 @@ const Profile = () => {
     const { slug } = useParams()
     const [user, setUser] = useState()
     const [newPassword, setNewPassword] = useState({
-        password: "",
-        validatePassword: ""
+        oldPassword: "",
+        newPassword: "",
+        validateNewPassword: ""
     })
     const navigate = useNavigate()
 
@@ -31,8 +32,17 @@ const Profile = () => {
     }, [])
     console.log(user)
 
-    const handlePasswordSubmit = (e) => {
+    const handlePasswordSubmit = async (e) => {
         e.preventDefault();
+        const response = await api.put(`/users/${user.id}/change-password`, newPassword, {
+            withCredentials: true
+        });
+        console.log(response.data)
+        setNewPassword({
+            oldPassword: "",
+            newPassword: "",
+            validateNewPassword: ""
+        })
 
     }
 

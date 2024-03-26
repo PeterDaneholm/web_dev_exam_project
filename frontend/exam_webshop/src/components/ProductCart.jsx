@@ -14,6 +14,8 @@ const ProductCart = ({ user }) => {
                     className='border-b-2 w-full ' >
                     {item.name}
                     {item.price}
+                    {item.size.size}
+                    {item.size.quantity}
                     <Button key={index} text="Remove" onClick={() => removeFromCart(item)} width='w-full' />
                 </div>
             )}
