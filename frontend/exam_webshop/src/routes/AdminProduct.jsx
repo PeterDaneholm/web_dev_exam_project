@@ -86,10 +86,10 @@ const AdminProduct = () => {
                 <Input type='text' name='category_id' onChange={handleChange} value={newProduct.category_id} />
 
                 <label htmlFor="size">Size of Product</label>
-                <Input type='text' name='size' onChange={handleChange} value={size.size} />
+                <Input type='text' name='size' onChange={handleSizeChange} value={size.size} />
 
                 <label htmlFor="quantity">Quantity of Product</label>
-                <Input type='number' name='quantity' onChange={handleChange} value={size.quantity} />
+                <Input type='number' name='quantity' onChange={handleSizeChange} value={size.quantity} />
 
                 <Button text='Add Product' />
             </form>

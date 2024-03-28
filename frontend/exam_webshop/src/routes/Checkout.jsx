@@ -75,7 +75,10 @@ const Checkout = () => {
                         <div key={item.id}>
                             <h3>{item.name}</h3>
 
-                            <h4></h4>
+                            {/* <h4>{item.size[0].size}</h4>
+                            <h4>{item.size[0].quantity}</h4> */}
+
+                            {item.size.map((size) => <h4>{size.size} {size.quantity}</h4>)}
 
                             <Button text='Remove from Cart' onClick={() => removeFromCart(item)} />
                         </div>

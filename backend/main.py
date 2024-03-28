@@ -140,7 +140,8 @@ async def create_access_token_from_login(
 #LOGOUT
 @app.post("/logout")
 async def logout(response: Response ):
-    response.delete_cookie("access_token")
+    #response.delete_cookie("access_token")
+    response.set_cookie(key="access_token", value="", httponly=True, expires=timedelta(seconds=1))
     print(response.headers)
     return {"status": "success"}
 
