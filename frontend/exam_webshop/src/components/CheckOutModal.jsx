@@ -38,7 +38,7 @@ const CheckOutModal = () => {
                 </>
                 :
                 <>
-                    <CheckoutPayment />
+                    <CheckoutPayment payment={payment} setPayment={setPayment} />
                     <button onClick={changeLayout}>Switch</button>
                 </>
             }

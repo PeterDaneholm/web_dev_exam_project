@@ -9,21 +9,26 @@ const CheckoutDelivery = ({ delivery, setDelivery }) => {
 
     }
 
-    const handleChange = () => {
-
+    const handleChange = (e) => {
+        setDelivery((prev) => {
+            return {
+                ...prev,
+                [e.target.name]: e.target.value
+            }
+        })
     }
 
     return (
         <form action={submitDelivery}>
-            <Input placeholder='Street' onChange={handleChange} value={delivery.street_name} />
+            <Input type="text" name="street_name" placeholder='Street' onChange={handleChange} value={delivery.street_name} />
 
-            <Input placeholder='Street Number' onChange={handleChange} value={delivery.street_number} />
+            <Input type="text" name="street_number" placeholder='Street Number' onChange={handleChange} value={delivery.street_number} />
 
-            <Input placeholder='City' onChange={handleChange} value={delivery.city} />
+            <Input type="text" name="city" placeholder='City' onChange={handleChange} value={delivery.city} />
 
-            <Input placeholder='Zip Code' onChange={handleChange} value={delivery.zip_code} />
+            <Input type="number" name="zip_code" placeholder='Zip Code' onChange={handleChange} value={delivery.zip_code} />
 
-            <Input placeholder='Country' onChange={handleChange} value={delivery.country} />
+            <Input type="text" name="country" placeholder='Country' onChange={handleChange} value={delivery.country} />
         </form>
     )
 }
