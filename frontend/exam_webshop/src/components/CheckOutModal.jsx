@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Button from './basicelements/Button'
 import CheckoutDelivery from './Forms/CheckoutDelivery'
 import CheckoutPayment from './Forms/CheckoutPayment'
