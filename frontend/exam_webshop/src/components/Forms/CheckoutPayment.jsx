@@ -19,15 +19,18 @@ const CheckoutPayment = ({ payment, setPayment }) => {
     }
 
     return (
-        <form action={submitPayment}>
-            <Input type="number" name="card_number" placeholder='Card Number' onChange={handleChange} value={payment.card_number} />
+        <div>
+            <h3>Enter your payment Details here!</h3>
+            <form className='gap-2 flex flex-col'>
+                <Input type="number" name="card_number" placeholder='Card Number' onChange={handleChange} value={payment.card_number} />
 
-            <Input type="number" name="expiration_date" placeholder='Expiration Date' onChange={handleChange} value={payment.expiration_date} />
+                <Input type="number" name="expiration_date" placeholder='Expiration Date' onChange={handleChange} value={payment.expiration_date} />
 
-            <Input type="number" name="security_digits" placeholder='Security Digits' onChange={handleChange} value={payment.security_digits} />
+                <Input type="number" name="security_digits" placeholder='Security Digits' onChange={handleChange} value={payment.security_digits} />
 
-            <Input type="text" name="card_name" placeholder='Card Name' onChange={handleChange} value={payment.card_name} />
-        </form>
+                <Input type="text" name="card_name" placeholder='Card Name' onChange={handleChange} value={payment.card_name} />
+            </form>
+        </div>
     )
 }
 

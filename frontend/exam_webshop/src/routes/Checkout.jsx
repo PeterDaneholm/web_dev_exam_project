@@ -12,10 +12,10 @@ import CheckOutModal from '../components/CheckOutModal'
 
 const Checkout = () => {
     const { cart, removeFromCart, addUser } = useContext(CartContext)
+    const [readyToOrder, setReadyToOrder] = useState(false)
     const [user, setUser] = useState("")
     const navigate = useNavigate()
     const { showToast } = useToast()
-    console.log("cart", cart)
 
     useEffect(() => {
         isUserLoggedIn(navigate)
@@ -42,24 +42,25 @@ const Checkout = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const products = cart.map((item) => item.id
-        )
-        const order = { products: cart, total: getTotal(cart), customer_id: user }
-        console.log("order: ", order)
-        const response = await api.post("/neworder", order,
-            {
-                withCredentials: true,
-            })
-        console.log(response)
-        if (response.status === 200) {
-            showToast('Order placed', 'success')
-        } else {
-            showToast('Could not place order', 'fail')
+        if (readyToOrder) {
+            const products = cart.map((item) => item.id)
+            const order = { products: cart, total: getTotal(cart), customer_id: user }
+            console.log("order: ", order)
+            const response = await api.post("/neworder", order,
+                {
+                    withCredentials: true,
+                })
+            console.log(response)
+            if (response.status === 200) {
+                showToast('Order placed', 'success')
+            } else {
+                showToast('Could not place order', 'fail')
+            }
+            cart.forEach(item => {
+                removeFromCart(item)
+            });
+            navigate("/shop")
         }
-        cart.forEach(item => {
-            removeFromCart(item)
-        });
-        navigate("/shop")
     }
 
     return (
@@ -86,7 +87,7 @@ const Checkout = () => {
 
                     <Button text='Make the Order!' onClick={handleSubmit} />
 
-                    <CheckOutModal />
+                    <CheckOutModal readyToOrder={readyToOrder} setReadyToOrder={setReadyToOrder} />
                 </div>
             }
 

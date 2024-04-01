@@ -3,8 +3,11 @@ import { useState } from 'react'
 import Button from './basicelements/Button'
 import CheckoutDelivery from './Forms/CheckoutDelivery'
 import CheckoutPayment from './Forms/CheckoutPayment'
+import { verify_checkout } from '../utilities/checkout_requirements'
+import { useToast } from './Toast/ToastContext'
 
-const CheckOutModal = () => {
+const CheckOutModal = ({ readyToOrder, setReadyToOrder }) => {
+    const { showToast } = useToast();
     const [delivery, setDelivery] = useState({
         street_name: "",
         street_number: 0,
@@ -26,7 +29,11 @@ const CheckOutModal = () => {
 
     const handleCheckOut = (e) => {
         e.preventDefault();
-
+        if (!verify_checkout(delivery, payment)) {
+            showToast("Missing Delivery Address or Payment Information", "fail")
+        } else {
+            setReadyToOrder(true);
+        }
     }
 
     return (
