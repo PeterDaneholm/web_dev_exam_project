@@ -19,8 +19,8 @@ const CheckoutDelivery = ({ delivery, setDelivery }) => {
     }
 
     return (
-        <div>
-            <h3>Enter the Delivery Address!</h3>
+        <div className='w-full h-[250px]'>
+            <h3 className='text-center my-2 text-lg font-bold'>Enter the Delivery Address</h3>
             <form className='gap-2 flex flex-col'>
                 <Input type="text" name="street_name" placeholder='Street' onChange={handleChange} value={delivery.street_name} />
 

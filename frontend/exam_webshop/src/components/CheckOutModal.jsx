@@ -37,7 +37,7 @@ const CheckOutModal = ({ readyToOrder, setReadyToOrder }) => {
     }
 
     return (
-        <div className='w-3/4 h-3/4 rounded-md shadow-lg'>
+        <div className='w-3/4 h-3/4 rounded-md shadow-lg mx-auto p-2'>
             {currentCheckout === 'delivery' ?
                 <>
                     <CheckoutDelivery delivery={delivery} setDelivery={setDelivery} />
@@ -50,7 +50,7 @@ const CheckOutModal = ({ readyToOrder, setReadyToOrder }) => {
                 </>
             }
 
-            <Button onClick={handleCheckOut} />
+            <Button text='Set Info' width='w-[30%]' onClick={handleCheckOut} />
 
         </div>
     )

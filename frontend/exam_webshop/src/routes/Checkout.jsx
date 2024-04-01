@@ -71,23 +71,27 @@ const Checkout = () => {
                 </div>
                 :
                 <div>
-                    <h2>In your Shopping Cart</h2>
-                    {cart.map((item) =>
-                        <div key={item.id}>
-                            <h3>{item.name}</h3>
+                    <h2 className='text-lg font-semibold text-center m-2'>In your Shopping Cart</h2>
+                    <div className='flex flex-row flex-wrap'>
+                        {cart.map((item) => <>
+                            <div key={item.id} className='h-1/4 m-2 border-2 rounded-md px-2 w-[280px]'>
+                                <h3 className='text-lg'>{item.name}</h3>
+                                {item.size.map((size) => <div className='flex flex-row'>
+                                    <div className='flex flex-col'>
+                                        <h4>Size: {size.size} </h4>
+                                        <h4 >Quantity: {size.quantity}</h4>
+                                    </div>
+                                    <Button text='Remove from Cart' onClick={() => removeFromCart(item)} width='w-1/2' my='inline' />
+                                </div>)}
 
-                            {/* <h4>{item.size[0].size}</h4>
-                            <h4>{item.size[0].quantity}</h4> */}
-
-                            {item.size.map((size) => <h4>{size.size} {size.quantity}</h4>)}
-
-                            <Button text='Remove from Cart' onClick={() => removeFromCart(item)} />
-                        </div>
-                    )}
-
-                    <Button text='Make the Order!' onClick={handleSubmit} />
+                            </div>
+                        </>
+                        )}
+                    </div>
 
                     <CheckOutModal readyToOrder={readyToOrder} setReadyToOrder={setReadyToOrder} />
+
+                    <Button text='Make the Order!' onClick={handleSubmit} my='my-8 mx-auto' />
                 </div>
             }
 

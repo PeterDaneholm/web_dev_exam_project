@@ -19,8 +19,8 @@ const CheckoutPayment = ({ payment, setPayment }) => {
     }
 
     return (
-        <div>
-            <h3>Enter your payment Details here!</h3>
+        <div className='w-full h-[250px] '>
+            <h3 className='text-center text-lg font-bold my-2'>Enter your payment Details here</h3>
             <form className='gap-2 flex flex-col'>
                 <Input type="number" name="card_number" placeholder='Card Number' onChange={handleChange} value={payment.card_number} />
 
