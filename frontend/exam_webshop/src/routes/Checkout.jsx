@@ -91,7 +91,7 @@ const Checkout = () => {
 
                     <CheckOutModal readyToOrder={readyToOrder} setReadyToOrder={setReadyToOrder} />
 
-                    <Button text='Make the Order!' onClick={handleSubmit} my='my-8 mx-auto' />
+                    {readyToOrder && <Button text='Make the Order!' onClick={handleSubmit} my='my-8 mx-[16%]' width='w-2/3' />}
                 </div>
             }
 

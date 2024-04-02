@@ -104,10 +104,10 @@ function Products({ content }) {
 }
 function Users({ content }) {
     return <div>
-        <h3>Total Users</h3>
-        <h4>{content.length}</h4>
+        <h3 className='text-lg font-semibold'>Total Users: {content.length}</h3>
 
         <div>
+            <h4 className='text-lg'>All Users:</h4>
             {content.map((item) => (
                 <div key={item.id}>
                     {item.username}
@@ -118,12 +118,13 @@ function Users({ content }) {
     </div>
 }
 function Orders({ content }) {
-    return <>
+    return <div className='overflow-hidden'>
         {content.map(item => (
-            <div key={item.id}>
-                {item.total}
+            <div key={item.id} className='border-2 rounded-md m-2 p-2'>
+                <h4>Ordered by: {item.customer.username}</h4>
+                <h4> Order total:{item.total}</h4>
             </div>
         ))}
-    </>
+    </div>
 }
 export default Admin
