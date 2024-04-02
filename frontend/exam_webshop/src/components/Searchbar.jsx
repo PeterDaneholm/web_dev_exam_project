@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import api from '../api'
+import { Link } from 'react-router-dom'
 
 
 const Searchbar = () => {
@@ -32,13 +33,10 @@ const Searchbar = () => {
             </form>
 
             {search.length == 0 ? '' :
-                <div className='bg-slate-200 bg-opacity-90 absolute w-4/5 border-black border-2 rounded-lg p-3 right-[10%]'>
-                    <ul>
-                        {filterSearch.map(prod => {
-                            return <li key={prod.id}>
-                                {prod.name}</li>
-                        })}
-                    </ul>
+                <div className='bg-slate-200 bg-opacity-90 absolute w-4/5 border-black border-2 rounded-lg p-3 right-[10%] flex flex-col'>
+                    {filterSearch.map(prod => {
+                        return <Link key={prod.id} to={`/shop/${prod.id}`}>{prod.name}</Link>
+                    })}
                 </div>
             }
         </div>
