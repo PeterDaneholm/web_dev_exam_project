@@ -46,7 +46,7 @@ const Admin = () => {
         getProducts()
 
     }, [])
-    console.log(orders)
+    console.log(products)
 
 
     function isActive(page) {
@@ -90,27 +90,38 @@ function Dashboard({ }) {
     </div>
 }
 function Products({ content }) {
-    return <div>
-        <h3>All Products</h3>
-        {content.map(item => <div key={item.id}>
-            {item.name}
+    return <div className='overflow-auto max-h-full'>
+        <h3 className='font-semibold text-xl'>All Products</h3>
+        {content.map(item =>
+            <div key={item.id} className='bg-white border-2 border-gray-600 rounded-md m-2 p-2 flex flex-row justify-evenly'>
+                <div className='flex flex-col w-1/3'>
+                    <p className='text-lg'>{item.name}</p>
+                    <p>Price: {item.price} EUR</p>
+                    <p>Category: {item.category_id}</p>
+                </div>
+                <div className='w-1/3'>{item.size.map(s =>
+                    <div>
+                        <p>Sizes: {s.size}</p>
+                        <p>Current Stock: {s.quantity}</p>
+                    </div>)}</div>
 
-            <Link to={`product/${item.id}`}>
-                <MdEditSquare />
-            </Link>
+                <Link to={`product/${item.id}`}>
+                    Edit <MdEditSquare />
+                </Link>
 
-        </div>)}
+            </div>)}
     </div>
 }
 function Users({ content }) {
-    return <div>
-        <h3 className='text-lg font-semibold'>Total Users: {content.length}</h3>
-
+    return <div className='overlow-auto max-h-full'>
         <div>
-            <h4 className='text-lg'>All Users:</h4>
+            <h4 className='text-xl font-semibold'>All Users</h4>
             {content.map((item) => (
-                <div key={item.id}>
-                    {item.username}
+                <div key={item.id} className='border-2 bg-white border-black rounded-md m-2 p-2 '>
+                    <p>{item.username}</p>
+                    <p>First Name: {item.first_name}, Last Name: {item.last_name}</p>
+                    <p>Email address: {item.email_address}</p>
+
                 </div>
             ))}
         </div>
@@ -118,11 +129,15 @@ function Users({ content }) {
     </div>
 }
 function Orders({ content }) {
-    return <div className='overflow-hidden'>
+    return <div className='overflow-auto max-h-full'>
+        <h3 className='text-xl font-semibold'>All Orders</h3>
         {content.map(item => (
-            <div key={item.id} className='border-2 rounded-md m-2 p-2'>
+            <div key={item.id} className='border-2 rounded-md m-2 p-2 w-auto bg-white border-gray-600 shadow-sm '>
                 <h4>Ordered by: {item.customer.username}</h4>
-                <h4> Order total:{item.total}</h4>
+                <h4>First name: {item.customer.first_name}, Last name: {item.customer.last_name}</h4>
+                <h4>Ordered on: {item.order_date}</h4>
+                <h4> Order total: {item.total} EUR</h4>
+
             </div>
         ))}
     </div>
