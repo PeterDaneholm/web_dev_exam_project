@@ -42,6 +42,9 @@ class ProductSize(BaseModel):
     size: str
     quantity: int
 
+class ProductImage(BaseModel):
+    url: str = None
+
 class ProductBase(BaseModel):
     id: str
     name: str
@@ -50,7 +53,7 @@ class ProductBase(BaseModel):
     on_sale: bool = False
     size: List[ProductSize] = None
     category_id: str
-    image_id: Optional[List[str]] = None
+    image_id: Optional[List[ProductImage]] = None
 
 class OrderBase(BaseModel):
     products: List[ProductBase] = []
@@ -104,9 +107,9 @@ class UpdateProduct(ProductBase):
     price: float = None
     description: str = None
     on_sale: bool = None
-    size: str = None
+    size: List[ProductSize] = None
     category_id: str = None
-    #user_rating: float = None
+    image_id: Optional[List[ProductImage]] | None
 
 class UpdateSize(BaseModel):
     id: str = None
@@ -281,6 +284,10 @@ async def create_product(product: ProductBase,
     product_data = product.dict(by_alias=True)
     sizes = product_data.pop('size')
     size_instance = [models.ProductSize(**size) for size in sizes]
+    image_urls = product_data.get('image_id', {}).get('url', [])
+    image_instance = [models.ProductImage(url=url) for url in image_urls] if image_urls else []
+    product_data['image_id'] = image_instance
+
     new_product = models.Product(**product_data, size=size_instance)
     #new_product = models.Product(**product.model_dump())
     db.add(new_product)
@@ -301,7 +308,9 @@ async def get_products(db: db_dependency):
 #Get specific Product
 @app.get("/products/{product_id}", status_code=status.HTTP_200_OK)
 async def get_product(product_id: str, db: db_dependency):
-    db_product = db.query(models.Product).options(joinedload(models.Product.size))\
+    db_product = db.query(models.Product)\
+        .options(joinedload(models.Product.size), 
+                 joinedload(models.Product.image_id))\
         .filter(models.Product.id == product_id).first()
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -315,7 +324,21 @@ async def update_product(product_id: str, product: UpdateProduct, db: db_depende
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product is not found")
     
-    for field, value in product.model_dump(exclude_unset=True).items():
+    print(f"Product: {product} ")
+    update_data = product.dict(exclude_unset=True)
+    if 'size' in update_data:
+        del update_data['size']
+
+    if 'image_id' in update_data:
+        for image in update_data['image_id']:
+            new_image = models.ProductImage(**image)
+            db.add(new_image)
+            db_product.image_id.append(new_image)
+            del update_data['image_id']
+
+    #for field, value in product.model_dump(exclude_unset=True).items():
+    for field, value in update_data.items():
+        print(f"Field: {field}, Value: {value}")
         setattr(db_product, field, value)
     
     db.commit()

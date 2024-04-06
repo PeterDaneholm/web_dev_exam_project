@@ -50,11 +50,17 @@ class Product(Base):
     description = Column(String(400))
     on_sale = Column(Boolean, default=False)
     category_id = Column(Enum(CategoryEnum), nullable=False)
-    image_id = Column(String(100))
     #user_rating = (Float(1))
+    image_id = relationship('ProductImage', backref='products')
     size = relationship('ProductSize', backref='productsize')
     reviews = relationship('Review', backref='reviews')
 
+class ProductImage(Base):
+    __tablename__ = 'product_images'
+
+    id = Column(VARCHAR(36), primary_key=True, default=uuid.uuid4, nullable=False)
+    product_id = Column(VARCHAR(36), ForeignKey('products.id'))
+    url = Column(String(300))
 
 class Order(Base):
     __tablename__ = 'orders'

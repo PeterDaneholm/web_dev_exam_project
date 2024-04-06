@@ -15,6 +15,7 @@ const ProductPage = () => {
     const { addToCart } = useContext(CartContext);
     const navigate = useNavigate()
     const { showToast } = useToast()
+    console.log(product)
 
     useEffect(() => {
         const getProduct = async () => {
@@ -42,6 +43,7 @@ const ProductPage = () => {
     return (
         <div>
             <h2>{product.name}</h2>
+            <img src={`${product.image_id[0].url}`} alt="" />
             <h3>{product.price}</h3>
             <p>{product.description}</p>
 
