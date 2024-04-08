@@ -6,6 +6,11 @@ import { CartContext } from '../components/CartContext'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '../components/Toast/ToastContext'
 import Button from '../components/basicelements/Button'
+import Image from '../components/basicelements/Image'
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 
 
 const ProductPage = () => {
@@ -15,18 +20,25 @@ const ProductPage = () => {
     const { addToCart } = useContext(CartContext);
     const navigate = useNavigate()
     const { showToast } = useToast()
-    console.log(product)
+
+    const settings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1
+    };
 
     useEffect(() => {
         const getProduct = async () => {
             const response = await api.get(`/products/${id}`)
-            //console.log("response, ", response)
 
             setProduct(response.data)
         }
 
         getProduct()
     }, [id])
+    console.log(product)
 
     const AddProduct = (e) => {
         if (currentSize.quantity === 0) {
@@ -41,20 +53,28 @@ const ProductPage = () => {
     }
 
     return (
-        <div>
-            <h2>{product.name}</h2>
-            <img src={`${product.image_id[0].url}`} alt="" />
-            <h3>{product.price}</h3>
-            <p>{product.description}</p>
+        <div className=' mx-auto w-4/5 p-2 rounded-lg'>
+            <h2 className='text-2xl font-bold text-center my-4'>{product.name}</h2>
+            {product && product.image_id &&
+                <Slider {...settings}>
+                    {product.image_id.map((image, index) => (
+                        <div key={index}>
+                            <Image source={image.url} styles={'mx-auto'} />
+                        </div>
+                    ))}
+                </Slider>}
 
-            <div>
+            <p className='text-center m-3'>{product.description}</p>
+            <h3>{product.price}</h3>
+
+            <div className='flex flex-row'>
                 {product.size && Object.values(product.size).map((item) =>
                     <Button onClick={() => setCurrentSize(item)}
-                        key={item.id} text={`${item.size}: ${item.quantity} in stock`} />
+                        key={item.id} text={`${item.size}: ${item.quantity} in stock`} width='w-1/3' />
                 )}
             </div>
 
-            <Button text="Add to Cart" onClick={AddProduct} />
+            <Button text="Add to Cart" onClick={AddProduct} my='mx-auto' width='w-2/5' />
         </div>
     )
 }
