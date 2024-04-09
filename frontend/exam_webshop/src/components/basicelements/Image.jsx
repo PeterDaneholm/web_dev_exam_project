@@ -3,10 +3,11 @@ import React from 'react'
 const Image = ({
     source,
     styles,
-
+    width = "w-[340px]",
+    height = "h-[520px]"
 }) => {
     return (
-        <img src={`${source}`} className={`w-340px h-[520px] object-contain ${styles} rounded-lg`} />
+        <img src={`${source}`} className={`${width} ${height} object-contain ${styles} rounded-lg`} />
     )
 }
 

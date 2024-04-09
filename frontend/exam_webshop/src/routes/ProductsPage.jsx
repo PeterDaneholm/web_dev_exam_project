@@ -35,15 +35,17 @@ const ProductsPage = () => {
             <div className='flex flex-row h-auto w-full'>
 
                 <div className='w-full pt-5 h-full bg-white'>
-                    <Searchbar />
 
-                    <div className='flex flex-row w-[95%] ml-[2%] justify-evenly m-2 bg-primarydark py-2 rounded-lg'>
-                        {categories.map((item, index) => (
-                            <div onClick={() => filterProducts(products, item)} key={index}
-                                className='bg-contrastdark p-2 rounded-lg hover:bg-contrast hover:cursor-pointer '>
-                                {item}
-                            </div>
-                        ))}
+                    <div className='flex flex-col w-[95%] ml-[2%] justify-evenly m-2 bg-primarydark py-2 rounded-lg'>
+                        <div className='flex flex-row justify-evenly mb-2'>
+                            {categories.map((item, index) => (
+                                <div onClick={() => filterProducts(products, item)} key={index}
+                                    className='bg-contrastdark p-2 rounded-lg hover:bg-contrast hover:cursor-pointer '>
+                                    {item}
+                                </div>
+                            ))}
+                        </div>
+                        <Searchbar />
                     </div>
 
                     <div className='bg-gray-200 w-[90%] mx-auto h-screen rounded-md p-2 shadow-inner '>

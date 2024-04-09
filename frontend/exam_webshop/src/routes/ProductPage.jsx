@@ -54,7 +54,7 @@ const ProductPage = () => {
 
     return (
         <div className=' mx-auto w-4/5 p-2 rounded-lg'>
-            <h2 className='text-2xl font-bold text-center my-4'>{product.name}</h2>
+            <h2 className='text-2xl font-bold text-center m-2'>{product.name}</h2>
             {product && product.image_id &&
                 <Slider {...settings}>
                     {product.image_id.map((image, index) => (
@@ -64,17 +64,18 @@ const ProductPage = () => {
                     ))}
                 </Slider>}
 
-            <p className='text-center m-3'>{product.description}</p>
-            <h3>{product.price}</h3>
+            <p className='text-center m-3 mt-5'>{product.description}</p>
+            <h3 className='text-center'>{product.price} EUR</h3>
 
             <div className='flex flex-row'>
                 {product.size && Object.values(product.size).map((item) =>
                     <Button onClick={() => setCurrentSize(item)}
-                        key={item.id} text={`${item.size}: ${item.quantity} in stock`} width='w-1/3' />
+                        key={item.id} text={`${item.size} - ${item.quantity} in stock`} width='w-1/3'
+                        my='mx-2' />
                 )}
             </div>
 
-            <Button text="Add to Cart" onClick={AddProduct} my='mx-auto' width='w-2/5' />
+            <Button text="Add to Cart" onClick={AddProduct} my='ml-[30%]' width='w-2/5' bg='bg-contrast hover:bg-contrastdark' />
         </div>
     )
 }
