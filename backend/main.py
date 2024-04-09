@@ -334,7 +334,7 @@ async def update_product(product_id: str, product: UpdateProduct, db: db_depende
             new_image = models.ProductImage(**image)
             db.add(new_image)
             db_product.image_id.append(new_image)
-            del update_data['image_id']
+        del update_data['image_id']
 
     #for field, value in product.model_dump(exclude_unset=True).items():
     for field, value in update_data.items():
