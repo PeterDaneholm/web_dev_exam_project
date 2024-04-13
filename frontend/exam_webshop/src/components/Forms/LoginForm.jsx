@@ -31,6 +31,7 @@ const LoginForm = () => {
         });
         if (response.status === 200) {
             navigate("/shop");
+            window.location.reload();
         }
     }
 

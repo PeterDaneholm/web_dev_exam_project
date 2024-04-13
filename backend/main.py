@@ -130,15 +130,42 @@ async def create_access_token_from_login(
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"})
     access_token_expires = timedelta(minutes=60)
-    access_token = create_access_token(data={"sub": user.username, "scopes": [user.role]}, expires_delta=access_token_expires)
+    refresh_token_expires = timedelta(days=7)
+    access_token, refresh_token = create_access_token(data={"sub": user.username, "scopes": [user.role]}, 
+                                                      expires_delta=access_token_expires, 
+                                                      refresh_expires_delta=refresh_token_expires)
+
     response.set_cookie(key="access_token", 
                         value=f"Bearer {access_token}", 
                         httponly=True,
-
                         )
+    response.set_cookie(key="refresh_token",
+                        value=f"Bearer {refresh_token}",
+                        httponly=True
+                        )
+
     print(response.headers)
     return {"access_token": access_token, "token_type": "bearer"}
 
+#REFRESH TOKEN
+@app.post("/token/refresh")
+async def refresh_token(response: Response, 
+                        token: str = Depends(oath2_scheme)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
+                                detail="No user attached")
+    except JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
+                                detail="No user attached") 
+    access_token_expires = timedelta(minutes=60)    
+    access_token = create_access_token(
+        data={"sub": username}, expires_delta=access_token_expires)
+    response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
+
+    return {"access_token": access_token, "token_type": "bearer"}
 
 #LOGOUT
 @app.post("/logout")
@@ -404,7 +431,9 @@ async def create_order(order: OrderBase,
 @app.get("/orders/", response_model=List[OrderResponse])
 async def get_orders(db: db_dependency,
                      current_user: Annotated[UserBase, Security(get_current_user, scopes=["Admin"])]):
-    db_orders = db.query(models.Order).options(joinedload(models.Order.products), joinedload(models.Order.customer)).all()
+    db_orders = db.query(models.Order)\
+        .options(joinedload(models.Order.products), joinedload(models.Order.customer)).all()
+
     if db_orders is None:
         raise HTTPException(status_code=404, detail="Could not find any orders")
 

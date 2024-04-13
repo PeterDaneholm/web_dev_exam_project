@@ -1,11 +1,29 @@
 import api from "../api";
 
 async function GetUser() {
-    const response = await api.get("/users/me", {
-        withCredentials: true,
-    })
-    //console.log("response", response)
-    return response.data
+    try {
+        const response = await api.get("/users/me", {
+            withCredentials: true,
+        })
+        return response.data
+    } catch (error) {
+        if (error.response && error.response.status === 401) {
+            const refreshResponse = await api.get("/token/refresh", {
+                withCredentials: true
+            })
+            console.log(refreshResponse.status)
+            if (refreshResponse.status === 200) {
+                const retryRepsonse = await api.get("/users/me", {
+                    withCredentials: true
+                })
+                return retryRepsonse.data;
+            } else {
+                throw error
+            }
+        } else {
+            throw error
+        }
+    }
 }
 
 export async function onAdminRouteLoad(navigate) {

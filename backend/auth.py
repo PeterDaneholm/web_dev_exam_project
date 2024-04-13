@@ -101,13 +101,23 @@ async def get_admin_user(admin_user: Annotated[User, Security(get_current_user, 
     return admin_user
 
 
-def create_access_token(data:dict, expires_delta: timedelta | None = None):
+def create_access_token(data:dict, 
+                        expires_delta: timedelta | None = None,
+                        refresh_expires_delta: timedelta | None = None):
     to_encode = data.copy()
-    #print(f"encoding: {to_encode}")
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
         expire = datetime.now(timezone.utc) + timedelta(minutes=60)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+
+    if refresh_expires_delta:
+        refresh_expire = datetime.now(timezone.utc) + refresh_expires_delta
+    else:
+        refresh_expire = datetime.now(timezone.utc) + timedelta(days=7)
+    refresh_data = data.copy()
+    refresh_data.update({"exp": refresh_expire})
+    refresh_token = jwt.encode(refresh_data, SECRET_KEY, algorithm=ALGORITHM)
+    
+    return encoded_jwt, refresh_token
