@@ -1,34 +1,17 @@
 import api from "../api";
 
 async function GetUser() {
-    try {
-        const response = await api.get("/users/me", {
-            withCredentials: true,
-        })
-        return response.data
-    } catch (error) {
-        if (error.response && error.response.status === 401) {
-            const refreshResponse = await api.get("/token/refresh", {
-                withCredentials: true
-            })
-            console.log(refreshResponse.status)
-            if (refreshResponse.status === 200) {
-                const retryRepsonse = await api.get("/users/me", {
-                    withCredentials: true
-                })
-                return retryRepsonse.data;
-            } else {
-                throw error
-            }
-        } else {
-            throw error
-        }
-    }
+    const response = await api.get("/users/me", {
+        withCredentials: true,
+    })
+    //console.log("response", response)
+    return response.data
 }
 
 export async function onAdminRouteLoad(navigate) {
     try {
         const user = await GetUser();
+        console.log(user)
 
         if (user.role === "Admin") {
             return null

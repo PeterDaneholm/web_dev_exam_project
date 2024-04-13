@@ -46,7 +46,6 @@ const Admin = () => {
         getProducts()
 
     }, [])
-    console.log(products)
 
 
     function isActive(page) {

@@ -56,7 +56,7 @@ class ProductBase(BaseModel):
     image_id: Optional[List[ProductImage]] = None
 
 class OrderBase(BaseModel):
-    products: List[ProductBase] = []
+    products: List[str] = []
     customer_id: str
     total: float
 
@@ -78,14 +78,31 @@ class UserResponse(BaseModel):
     last_name: str
     orders: Optional[List[OrderBase]] = []
 
+class UserBaseWithoutOrders(BaseModel):
+    id: str
+    username: str
+    email_address:str
+    first_name: str
+    last_name: str
+    role: str
+
 class OrderResponse(OrderBase):
     products: List[ProductBase] = []
     total: float
-    customer: UserResponse
+    customer: UserBaseWithoutOrders
     customer_id: str
     order_date: date
     id: str
 
+class UsersMeResponse(BaseModel):
+    id: str
+    username: str
+    email_address: str
+    first_name: str
+    last_name: str
+    role: str
+    orders: Optional[List[OrderResponse]] = []
+       
 class UpdateUser(UserBase):
     id: str = None
     email_address: str = None
@@ -130,42 +147,15 @@ async def create_access_token_from_login(
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"})
     access_token_expires = timedelta(minutes=60)
-    refresh_token_expires = timedelta(days=7)
-    access_token, refresh_token = create_access_token(data={"sub": user.username, "scopes": [user.role]}, 
-                                                      expires_delta=access_token_expires, 
-                                                      refresh_expires_delta=refresh_token_expires)
-
+    access_token = create_access_token(data={"sub": user.username, "scopes": [user.role]}, expires_delta=access_token_expires)
     response.set_cookie(key="access_token", 
                         value=f"Bearer {access_token}", 
                         httponly=True,
-                        )
-    response.set_cookie(key="refresh_token",
-                        value=f"Bearer {refresh_token}",
-                        httponly=True
-                        )
 
+                        )
     print(response.headers)
     return {"access_token": access_token, "token_type": "bearer"}
 
-#REFRESH TOKEN
-@app.post("/token/refresh")
-async def refresh_token(response: Response, 
-                        token: str = Depends(oath2_scheme)):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
-                                detail="No user attached")
-    except JWTError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
-                                detail="No user attached") 
-    access_token_expires = timedelta(minutes=60)    
-    access_token = create_access_token(
-        data={"sub": username}, expires_delta=access_token_expires)
-    response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
-
-    return {"access_token": access_token, "token_type": "bearer"}
 
 #LOGOUT
 @app.post("/logout")
@@ -204,7 +194,7 @@ async def create_user(user: UserBase, db: db_dependency):
     return db_user
 
 #Authentication route for checking user is logged in
-@app.get("/users/me", response_model=UserBase)
+@app.get("/users/me", response_model=UsersMeResponse)
 async def read_current_user(user: UserBase = Depends(get_current_user)):
     return user
 
@@ -311,10 +301,13 @@ async def create_product(product: ProductBase,
     product_data = product.dict(by_alias=True)
     sizes = product_data.pop('size')
     size_instance = [models.ProductSize(**size) for size in sizes]
-    image_urls = product_data.get('image_id', {}).get('url', [])
+    image_urls = [image.get("url") for image in product_data.get("image_id", [])]
     image_instance = [models.ProductImage(url=url) for url in image_urls] if image_urls else []
-    product_data['image_id'] = image_instance
 
+    db.add_all(image_instance)
+    db.commit()
+    
+    product_data['image_id'] = image_instance
     new_product = models.Product(**product_data, size=size_instance)
     #new_product = models.Product(**product.model_dump())
     db.add(new_product)
@@ -407,65 +400,41 @@ async def delete_product(product_id: str, db: db_dependency):
 async def create_order(order: OrderBase, 
                        db: db_dependency,
                        current_user: Annotated[UserBase, Security(get_current_user)]):
-
+    print(order)
     products = db.query(models.Product).filter(models.Product.id.in_(order.products)).all()
-    new_order = models.Order(products=products, customer_id=order.customer_id, total=order.total)
-    new_order.products = products
+    new_order = models.Order(customer_id=order.customer_id, total=order.total)
+    #new_order.products = products
 
     #Need to update size quantity
-    for i in order.products:
-        product = db.query(models.Product).get(i.id)
-        for size in i.size:
-            db.query(models.ProductSize).filter(models.ProductSize.id == size.id)\
-                .update({models.ProductSize.quantity: models.ProductSize.quantity - size.quantity})
+    #for i in order.products:
+        #product = db.query(models.Product).get(i.id)
+        #for size in i.size:
+            #db.query(models.ProductSize).filter(models.ProductSize.id == size.id)\
+                #.update({models.ProductSize.quantity: models.ProductSize.quantity - size.quantity})
+
+    for product in products:
+        new_order.products.append(product)
+    
+    db.add(new_order)
+    db.commit()
 
     user = db.query(models.User).filter(models.User.id == order.customer_id).first()
-    print(user)
     user.orders.append(new_order)
 
-    db.add(new_order)
     db.commit()
     return new_order
 
 #Get all Orders
-@app.get("/orders/", response_model=List[OrderResponse])
+@app.get("/orders/")
 async def get_orders(db: db_dependency,
                      current_user: Annotated[UserBase, Security(get_current_user, scopes=["Admin"])]):
-    db_orders = db.query(models.Order)\
-        .options(joinedload(models.Order.products), joinedload(models.Order.customer)).all()
-
+    db_orders = db.query(models.Order).options(
+        joinedload(models.Order.products).joinedload(models.Product.image_id), 
+        joinedload(models.Order.customer)).all()
     if db_orders is None:
         raise HTTPException(status_code=404, detail="Could not find any orders")
 
-    response_orders = [OrderResponse(
-        id= order.id,
-        products=[ProductBase(
-            id=product.id,
-            name=product.name,
-            price=product.price,
-            description = product.description,
-            on_sale=product.on_sale,
-            size=[ProductSize(
-                id=size.id,
-                quantity=size.quantity,
-                size=size.size
-            ) for size in product.size],
-            category_id=product.category_id,
-            image_id=product.image_id
-        ) for product in order.products],
-        customer=UserResponse(
-            id=order.customer_id,
-            username=order.customer.username,
-            first_name=order.customer.first_name,
-            last_name=order.customer.last_name,
-            email_address=order.customer.email_address,
-        ),
-        customer_id=order.customer_id,
-        order_date=order.order_date,
-        total=order.total
-    ) for order in db_orders]
-
-    return response_orders
+    return db_orders
 
 #Get specific Order
 @app.get("/orders/{order_id}", status_code=status.HTTP_200_OK)
