@@ -43,8 +43,11 @@ const Checkout = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (readyToOrder) {
+            console.log(cart)
             const products = cart.map((item) => item.id)
-            const order = { products: products, total: getTotal(cart), customer_id: user }
+            const sizes = cart.map(item => item.size[0].id)
+            console.log(sizes)
+            const order = { products: products, size_id: sizes, total: getTotal(cart), customer_id: user }
             console.log("order: ", order)
             const response = await api.post("/neworder", order,
                 {

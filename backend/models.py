@@ -75,7 +75,8 @@ class Order(Base):
 
 OrderProducts = Table('orderproducts', Base.metadata,
                     Column('order_id', VARCHAR(36), ForeignKey('orders.id'), primary_key=True),
-                    Column('product_id', VARCHAR(36), ForeignKey('products.id'), primary_key=True))
+                    Column('product_id', VARCHAR(36), ForeignKey('products.id'), primary_key=True),
+                    Column('size_id', VARCHAR(36), ForeignKey('size.id'), primary_key=True))
 
 
 #User.orders = relationship('Order', back_populates='customer')

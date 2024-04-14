@@ -13,6 +13,9 @@ const AdminProduct = () => {
         size: [],
         price: 0,
         category_id: "",
+        image_id: [
+            { "url": "" }
+        ]
     })
     const [size, setSize] = useState({ size: "", quantity: 0 })
     const navigate = useNavigate()
@@ -49,6 +52,7 @@ const AdminProduct = () => {
         e.preventDefault();
 
         let formData = { ...newProduct, id: uuidv4(), on_sale: false }
+        formData.image_id = formData.image_id.filter(image => image.url !== '')
         if (formData.price) {
             formData.price = parseInt(formData.price)
         }
@@ -90,6 +94,24 @@ const AdminProduct = () => {
 
                 <label htmlFor="quantity">Quantity of Product</label>
                 <Input type='number' name='quantity' onChange={handleSizeChange} value={size.quantity} />
+
+                {newProduct.image_id.map((item, index) => (
+                    <Input type='text' name='image'
+                        onChange={e => {
+                            let newImages = [...newProduct.image_id]
+                            newImages[index].url = e.target.value
+                            setNewProduct(prev => ({
+                                ...prev,
+                                image_id: newImages
+                            }))
+                            if (index === newProduct.image_id.length - 1 && e.target.value !== '') {
+                                setNewProduct(prev => ({
+                                    ...prev,
+                                    image_id: [...prev.image_id, { url: '' }]
+                                }))
+                            }
+                        }} value={item.url} />
+                ))}
 
                 <Button text='Add Product' />
             </form>

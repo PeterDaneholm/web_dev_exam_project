@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, status, Security, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import APIRouter
 from typing import Annotated, List, Optional
 from sqlalchemy.orm import Session, joinedload
 from pydantic import BaseModel
@@ -57,6 +58,7 @@ class ProductBase(BaseModel):
 
 class OrderBase(BaseModel):
     products: List[str] = []
+    size_id: List[str] = []
     customer_id: str
     total: float
 
@@ -405,12 +407,15 @@ async def create_order(order: OrderBase,
     new_order = models.Order(customer_id=order.customer_id, total=order.total)
     #new_order.products = products
 
+    for i in order.size_id:
+        db.query(models.ProductSize).filter(models.ProductSize.id == i)\
+            .update({models.ProductSize.quantity: models.ProductSize.quantity - 1})
     #Need to update size quantity
-    #for i in order.products:
-        #product = db.query(models.Product).get(i.id)
-        #for size in i.size:
-            #db.query(models.ProductSize).filter(models.ProductSize.id == size.id)\
-                #.update({models.ProductSize.quantity: models.ProductSize.quantity - size.quantity})
+    # for i in order.products:
+        # product = db.query(models.Product).get(i.id)
+        # for size in i.size:
+            # db.query(models.ProductSize).filter(models.ProductSize.id == size.id)\
+                # .update({models.ProductSize.quantity: models.ProductSize.quantity - size.quantity})
 
     for product in products:
         new_order.products.append(product)
