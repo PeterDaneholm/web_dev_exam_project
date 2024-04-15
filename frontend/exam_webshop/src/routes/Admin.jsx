@@ -46,7 +46,6 @@ const Admin = () => {
         getProducts()
 
     }, [])
-    console.log(orders)
 
     function isActive(page) {
         return activeSubPage === page ? "bg-contrastdark w-full " : ""
@@ -72,7 +71,7 @@ const Admin = () => {
                 </ul>
             </div>
 
-            <div className='m-2 p-3 bg-primarydark w-screen h-auto rounded-xl shadow-sm'>
+            <div className='m-2 p-3 bg-primarydark w-screen h-auto rounded-xl shadow-sm mt-4'>
                 {activeSubPage === "dashboard" && <Dashboard />}
                 {activeSubPage === "products" && <Products content={products} />}
                 {activeSubPage === "orders" && <Orders content={orders} />}
@@ -85,7 +84,9 @@ const Admin = () => {
 
 function Dashboard({ }) {
     return <div>Dashboard
-        Need to figure out what to put here :/
+        <p>
+            Select a sub-Menu on the left, to view the related fields.
+        </p>
     </div>
 }
 function Products({ content }) {
@@ -98,8 +99,8 @@ function Products({ content }) {
                     <p>Price: {item.price} EUR</p>
                     <p>Category: {item.category_id}</p>
                 </div>
-                <div className='w-1/3'>{item.size.map(s =>
-                    <div>
+                <div className='w-1/3'>{item.size.map((s, index) =>
+                    <div key={index}>
                         <p>Sizes: {s.size}</p>
                         <p>Current Stock: {s.quantity}</p>
                     </div>)}</div>

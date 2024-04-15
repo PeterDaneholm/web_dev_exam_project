@@ -31,11 +31,8 @@ const LoginForm = () => {
         });
         if (response.status === 200) {
             navigate("/shop");
+            window.location.reload();
         }
-    }
-
-    const resetPassword = () => {
-
     }
 
     return (
@@ -56,8 +53,8 @@ const LoginForm = () => {
                 <Button text="Log In" width={"w-[50%]"} my={"my-8"} />
             </form>
 
-            <Button text='Forgot your password?' onClick={resetPassword} />
-
+            {/*             <Button text='Forgot your password?' onClick={resetPassword} />
+ */}
             <Link to={"/signup"} className='my-3 bg-primarydark rounded-lg w-[70%] mx-auto hover:bg-contrast'>
                 Don't have an account? Sign up here!
             </Link>
