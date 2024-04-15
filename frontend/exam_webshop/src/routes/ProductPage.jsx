@@ -67,7 +67,7 @@ const ProductPage = () => {
             <p className='text-center m-3 mt-5'>{product.description}</p>
             <h3 className='text-center'>{product.price} EUR</h3>
 
-            <div className='flex flex-row'>
+            <div className='flex flex-row flex-wrap w-4/5 mx-auto justify-between'>
                 {product.size && Object.values(product.size).map((item) =>
                     <Button onClick={() => setCurrentSize(item)}
                         key={item.id} text={`${item.size} - ${item.quantity} in stock`} width='w-1/3'

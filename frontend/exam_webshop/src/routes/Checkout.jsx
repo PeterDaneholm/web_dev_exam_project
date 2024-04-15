@@ -36,10 +36,6 @@ const Checkout = () => {
         return total
     }
 
-    const uploadImages = async (e) => {
-
-    }
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (readyToOrder) {

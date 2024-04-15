@@ -48,7 +48,7 @@ const ProductsPage = () => {
                         <Searchbar />
                     </div>
 
-                    <div className='bg-gray-200 w-[90%] mx-auto h-screen rounded-md p-2 shadow-inner '>
+                    <div className='bg-gray-200 w-[90%] mx-auto h-auto max-h-[808px] rounded-md p-2 shadow-inner '>
                         <ul className='flex flex-row flex-wrap'>
                             {filteredProducts.length == 0 ?
                                 <>

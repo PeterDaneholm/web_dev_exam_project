@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { onAdminRouteLoad } from '../utilities/get_user'
 import Button from '../components/basicelements/Button'
 import Input from '../components/basicelements/Input'
+import { useToast } from '../components/Toast/ToastContext'
 
 const AdminProduct = () => {
     const [newProduct, setNewProduct] = useState({
@@ -19,6 +20,7 @@ const AdminProduct = () => {
     })
     const [size, setSize] = useState({ size: "", quantity: 0 })
     const navigate = useNavigate()
+    const { showToast } = useToast()
 
     useEffect(() => {
         onAdminRouteLoad(navigate)
@@ -46,6 +48,7 @@ const AdminProduct = () => {
         setNewProduct({ ...newProduct, size: [...newProduct.size, size] })
         console.log(newProduct)
         setSize({ size: "", quantity: 0 })
+        showToast("Size added", "success")
     }
 
     const handleSubmit = async (e) => {
@@ -74,29 +77,30 @@ const AdminProduct = () => {
     }
 
     return (
-        <div>
+        <div className='w-full'>
 
-            <form onSubmit={handleSubmit} className='bg-gray-200 flex flex-col w-[90%] p-2 rounded-lg m-2'>
+            <form onSubmit={handleSubmit} className='bg-gray-200 flex flex-col w-[90%] p-2 rounded-lg m-2 text-center gap-2 mx-auto'>
                 <label htmlFor="name">Name of Product</label>
-                <Input type='text' name='name' onChange={handleChange} value={newProduct.name} />
+                <Input type='text' name='name' onChange={handleChange} value={newProduct.name} placeholder='Product Name' />
 
                 <label htmlFor="description">Description of Product</label>
-                <Input type='text' name='description' onChange={handleChange} value={newProduct.description} />
+                <Input type='text' name='description' onChange={handleChange} value={newProduct.description} placeholder='Description of Product' />
 
                 <label htmlFor="price">Price of Product</label>
-                <Input type='text' name='price' onChange={handleChange} value={newProduct.price} />
+                <Input type='text' name='price' onChange={handleChange} value={newProduct.price} placeholder='Price' />
 
                 <label htmlFor="category_id">Category of Product</label>
-                <Input type='text' name='category_id' onChange={handleChange} value={newProduct.category_id} />
+                <Input type='text' name='category_id' onChange={handleChange} value={newProduct.category_id} placeholder='Select Category' />
 
                 <label htmlFor="size">Size of Product</label>
-                <Input type='text' name='size' onChange={handleSizeChange} value={size.size} />
+                <Input type='text' name='size' onChange={handleSizeChange} value={size.size} placeholder='Add Sizes' />
 
                 <label htmlFor="quantity">Quantity of Product</label>
                 <Input type='number' name='quantity' onChange={handleSizeChange} value={size.quantity} />
 
+                <label htmlFor='image'>Add Images below</label>
                 {newProduct.image_id.map((item, index) => (
-                    <Input type='text' name='image'
+                    <Input type='text' name='image' key={index}
                         onChange={e => {
                             let newImages = [...newProduct.image_id]
                             newImages[index].url = e.target.value
@@ -110,13 +114,13 @@ const AdminProduct = () => {
                                     image_id: [...prev.image_id, { url: '' }]
                                 }))
                             }
-                        }} value={item.url} />
+                        }} value={item.url} placeholder='Add URL for the image' />
                 ))}
 
                 <Button text='Add Product' />
             </form>
 
-            <Button text="Add Size" onClick={addSize} />
+            <Button text="Add Size" onClick={addSize} width='w-3/5' my='ml-[20%]' />
         </div>
     )
 }
