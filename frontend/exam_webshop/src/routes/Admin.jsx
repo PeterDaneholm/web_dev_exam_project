@@ -46,7 +46,7 @@ const Admin = () => {
         getProducts()
 
     }, [])
-
+    console.log(orders)
 
     function isActive(page) {
         return activeSubPage === page ? "bg-contrastdark w-full " : ""

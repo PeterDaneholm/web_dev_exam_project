@@ -238,9 +238,10 @@ async def get_users(db:db_dependency,
         raise
 
 #Get specific user
-@app.get("/users/{user_id}", status_code=status.HTTP_200_OK)
+@app.get("/users/{user_id}", response_model=UsersMeResponse, status_code=status.HTTP_200_OK)
 async def get_user(user_id: str, db: db_dependency):
-    db_user = db.query(models.User).options(joinedload(models.User.orders)).filter(models.User.username == user_id).first()
+    db_user = db.query(models.User)\
+        .options(joinedload(models.User.orders)).filter(models.User.username == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     #Validate that the username is the same as the token
