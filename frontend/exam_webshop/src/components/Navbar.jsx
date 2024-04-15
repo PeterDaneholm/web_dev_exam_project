@@ -52,11 +52,11 @@ const Navbar = () => {
                 <div className='flex flex-row justify-evenly w-[30%] float-end items-center'>
                     <div className='relative inline-block'>
                         <button onClick={() => setProductCartOpen(!productCartOpen)}
-                            className='' ref={productCartRef}>
+                            className='hover:bg-contrastdark w-[36px] h-[36px] pl-2 rounded-md' ref={productCartRef}>
                             <FaCartShopping />
                             {cart.length == 0 ?
                                 "" :
-                                <div className='w-5 h-5 bg-red-500 rounded-xl absolute bottom-4 left-2'>
+                                <div className='w-5 h-5 bg-red-500 rounded-xl absolute bottom-5 left-5'>
                                     {cart.length}</div>
                             }
                         </button>
@@ -68,7 +68,7 @@ const Navbar = () => {
 
                     <div className='relative inline-block'>
                         <button onClick={() => setProfileOpen(!profileOpen)}
-                            className='' ref={profileRef}>
+                            className='hover:bg-contrastdark w-[36px] h-[36px] pl-2 rounded-md' ref={profileRef}>
                             <FaRegUserCircle />
                         </button>
                         {profileOpen ?

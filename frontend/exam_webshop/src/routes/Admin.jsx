@@ -105,8 +105,8 @@ function Products({ content }) {
                         <p>Current Stock: {s.quantity}</p>
                     </div>)}</div>
 
-                <Link to={`product/${item.id}`}>
-                    Edit <MdEditSquare />
+                <Link to={`product/${item.id}`} className='hover:bg-contrastdark p-3 h-[74px] rounded-md'>
+                    Update Quantity <MdEditSquare size={'24'} className='ml-[40%] mt-1' />
                 </Link>
 
             </div>)}

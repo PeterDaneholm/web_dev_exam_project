@@ -6,6 +6,8 @@ import { onAdminRouteLoad } from '../utilities/get_user'
 import Button from '../components/basicelements/Button'
 import Input from '../components/basicelements/Input'
 import { useToast } from '../components/Toast/ToastContext'
+import { Link } from 'react-router-dom'
+
 
 const AdminProduct = () => {
     const [newProduct, setNewProduct] = useState({
@@ -78,8 +80,10 @@ const AdminProduct = () => {
 
     return (
         <div className='w-full'>
-
-            <form onSubmit={handleSubmit} className='bg-gray-200 flex flex-col w-[90%] p-2 rounded-lg m-2 text-center gap-2 mx-auto'>
+            <Link to={"/admin"} className='w-[100px] h-[24px] bg-contrast hover:bg-contrastdark rounded-md p-2 m-4'>
+                Back to Panel
+            </Link>
+            <form onSubmit={handleSubmit} className='bg-primary shadow-inner flex flex-col w-[90%] p-6 rounded-lg m-2 text-center gap-2 mx-auto'>
                 <label htmlFor="name">Name of Product</label>
                 <Input type='text' name='name' onChange={handleChange} value={newProduct.name} placeholder='Product Name' />
 
@@ -117,7 +121,7 @@ const AdminProduct = () => {
                         }} value={item.url} placeholder='Add URL for the image' />
                 ))}
 
-                <Button text='Add Product' />
+                <Button text='Add Product' width='w-3/5' />
             </form>
 
             <Button text="Add Size" onClick={addSize} width='w-3/5' my='ml-[20%]' />
