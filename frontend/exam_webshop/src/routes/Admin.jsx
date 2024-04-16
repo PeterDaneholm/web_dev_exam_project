@@ -8,7 +8,17 @@ import { onAdminRouteLoad } from '../utilities/get_user';
 import { useNavigate } from 'react-router-dom'
 import { MdEditSquare } from "react-icons/md";
 import { RiBillLine } from "react-icons/ri";
+import Button from '../components/basicelements/Button';
+import { useToast } from '../components/Toast/ToastContext';
 
+
+const handleDelete = async (id) => {
+    const response = await api.delete(`/products/${id}`)
+    if (response.status === 200) {
+        // showToast("Product Removed", "success");
+        window.location.reload();
+    }
+}
 
 const Admin = () => {
     const [users, setUsers] = useState([])
@@ -16,6 +26,7 @@ const Admin = () => {
     const [products, setProducts] = useState([])
     const [activeSubPage, setActiveSubPage] = useState("dashboard")
     const navigate = useNavigate()
+    const { showToast } = useToast()
 
     useEffect(() => {
         onAdminRouteLoad(navigate)
@@ -105,10 +116,12 @@ function Products({ content }) {
                         <p>Current Stock: {s.quantity}</p>
                     </div>)}</div>
 
-                <Link to={`product/${item.id}`} className='hover:bg-contrastdark p-3 h-[74px] rounded-md'>
-                    Update Quantity <MdEditSquare size={'24'} className='ml-[40%] mt-1' />
-                </Link>
-
+                <div className='flex flex-col'>
+                    <Link to={`product/${item.id}`} className='hover:bg-contrastdark p-3 h-[74px] rounded-md'>
+                        Update Quantity <MdEditSquare size={'24'} className='ml-[40%] mt-1' />
+                    </Link>
+                    {/* <Button text='Remove Product' onClick={e => handleDelete(item.id)} /> */}
+                </div>
             </div>)}
     </div>
 }
@@ -118,7 +131,7 @@ function Users({ content }) {
             <h4 className='text-xl font-semibold'>All Users</h4>
             {content.map((item) => (
                 <div key={item.id} className='border-2 bg-white border-black rounded-md m-2 p-2 '>
-                    <p>{item.username}</p>
+                    <p>Username: {item.username}</p>
                     <p>First Name: {item.first_name}, Last Name: {item.last_name}</p>
                     <p>Email address: {item.email_address}</p>
 

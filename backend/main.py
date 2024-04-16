@@ -205,7 +205,6 @@ async def read_current_user(user: UserBase = Depends(get_current_user)):
 async def get_users(db:db_dependency, 
                     request: Request,
                     current_user: Annotated[UserBase, Security(get_current_user, scopes=["Admin"])]
-                    #token: str = Depends(oath2_scheme)
                     ):
     try:
         token = request.cookies.get("access_token")
@@ -298,7 +297,6 @@ async def delete_user(id: str, db: db_dependency):
 @app.post("/products/", status_code=status.HTTP_201_CREATED)
 async def create_product(product: ProductBase, 
                          db: db_dependency,
-                         #current_user: Annotated[UserBase, Security(get_current_user, scopes=["Admin"])]
                          ):
     print(product)
     product_data = product.dict(by_alias=True)
@@ -312,7 +310,6 @@ async def create_product(product: ProductBase,
     
     product_data['image_id'] = image_instance
     new_product = models.Product(**product_data, size=size_instance)
-    #new_product = models.Product(**product.model_dump())
     db.add(new_product)
     db.commit()
     return new_product
@@ -406,17 +403,10 @@ async def create_order(order: OrderBase,
     print(order)
     products = db.query(models.Product).filter(models.Product.id.in_(order.products)).all()
     new_order = models.Order(customer_id=order.customer_id, total=order.total)
-    #new_order.products = products
 
     for i in order.size_id:
         db.query(models.ProductSize).filter(models.ProductSize.id == i)\
             .update({models.ProductSize.quantity: models.ProductSize.quantity - 1})
-    #Need to update size quantity
-    # for i in order.products:
-        # product = db.query(models.Product).get(i.id)
-        # for size in i.size:
-            # db.query(models.ProductSize).filter(models.ProductSize.id == size.id)\
-                # .update({models.ProductSize.quantity: models.ProductSize.quantity - size.quantity})
 
     for product in products:
         new_order.products.append(product)
