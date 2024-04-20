@@ -40,6 +40,7 @@ const Navbar = () => {
             window.removeEventListener('click', handleOutsideClick)
         }
     }, [])
+    console.log(user)
 
     return (
         <div className='sticky bg-primary h-24 w-full flex flex-row justify-between z-20'>

@@ -15,8 +15,10 @@ from database import db_dependency, get_db
 from passlib.context import CryptContext
 from dotenv import load_dotenv
 import os
+from routers.user_routes import router as user_router
 
 app = FastAPI()
+app.include_router(user_router, tags=["Users"])
 
 origins = [
     "http://localhost:5173",
@@ -181,115 +183,6 @@ async def password_reset(email: str, db: db_dependency):
     return {"message": "Password reset email sent"}
 
 #USER ROUTES
-#Create user
-@app.post("/register/", status_code=status.HTTP_201_CREATED)
-async def create_user(user: UserBase, db: db_dependency):
-    existing_user = db.query(models.User).filter(models.User.username == user.username).first()
-    if existing_user:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already exists")
-    hashed_password = pwd_context.hash(user.password)
-    user_dict = user.dict(by_alias=True)
-    user_dict["password"]  = hashed_password
-    db_user = models.User(**user_dict)
-    db.add(db_user)
-    db.commit()
-    return db_user
-
-#Authentication route for checking user is logged in
-@app.get("/users/me", response_model=UsersMeResponse)
-async def read_current_user(user: UserBase = Depends(get_current_user)):
-    return user
-
-#Get all users
-@app.get("/users/", response_model=List[UserResponse])
-async def get_users(db:db_dependency, 
-                    request: Request,
-                    current_user: Annotated[UserBase, Security(get_current_user, scopes=["Admin"])]
-                    ):
-    try:
-        token = request.cookies.get("access_token")
-        print(f"Token: {token}")
-        if token.startswith("Bearer "):
-            token = token[7:]
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        print(f"Payload: {payload}")
-        if 'Admin' not in payload["scopes"]:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Not enough permissions",
-                headers={"WWW-Authenticate": "Bearer"}
-            )
-        db_users = db.query(models.User).options(joinedload(models.User.orders))\
-            .filter(models.User.role == 'user').all()
-        if db_users is None:
-            raise HTTPException(status_code=404, detail="Users could not be found")
-        
-        users_without_password = []
-        for user in db_users:
-            user_dict = user.__dict__
-            user_dict.pop('_sa_instance_state', None) #Is this necessary? Included for now until tested
-            user_dict.pop('password', None)
-            users_without_password.append(user_dict)
-
-        return db_users
-    except Exception as e:
-        print(f"Error: {e}")
-        raise
-
-#Get specific user
-@app.get("/users/{user_id}", response_model=UsersMeResponse, status_code=status.HTTP_200_OK)
-async def get_user(user_id: str, db: db_dependency):
-    db_user = db.query(models.User)\
-        .options(joinedload(models.User.orders)).filter(models.User.username == user_id).first()
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    #Validate that the username is the same as the token
-
-    return db_user
-
-#Update User
-@app.put("/users/{user_id}", status_code=status.HTTP_200_OK)
-async def update_user(user_id: str, user: UpdateUser, db: db_dependency):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User with id: {user_id} not found")    
-
-    for field, value in user.model_dump(exclude_unset=True).items():
-        setattr(db_user, field, value)
-
-    db.commit()
-    db.refresh(db_user)
-
-    return db_user
-
-#Update Password
-@app.put("/users/{user_id}/change-password", status_code=status.HTTP_200_OK)
-async def change_password(user_id: str, 
-                          data: UpdateUserPassword, 
-                          db: db_dependency,
-                          current_user: Annotated[UserBase, Security(get_current_user)]):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if db_user is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    
-    if not verify_password(data.old_password, db_user.password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Old password was not correct")
-
-    new_hashed = pwd_context.hash(data.new_password)
-    db_user.password = new_hashed
-    db.commit()
-    db.refresh(db_user)
-    return {"message": f"Password updated for user {db_user.username}"}
-
-#Delete user
-@app.delete("/users/{id}", status_code=status.HTTP_200_OK)
-async def delete_user(id: str, db: db_dependency):
-    db_id = db.query(models.User).filter(models.User.id == id).first() 
-    if db_id is None:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    db.delete(db_id)
-    db.commit()
 
 
 #PRODUCT ROUTES
