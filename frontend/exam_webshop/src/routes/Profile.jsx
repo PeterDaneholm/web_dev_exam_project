@@ -4,6 +4,8 @@ import api from '../api'
 import { useNavigate, useParams } from 'react-router-dom'
 import Button from '../components/basicelements/Button'
 import Input from '../components/basicelements/Input'
+import { useToast } from '../components/Toast/ToastContext'
+
 
 const Profile = () => {
     const { slug } = useParams()
@@ -14,6 +16,7 @@ const Profile = () => {
         validateNewPassword: ""
     })
     const navigate = useNavigate()
+    const { showToast } = useToast();
 
     useEffect(() => {
         const CheckLoggedIn = async () => {
@@ -30,14 +33,14 @@ const Profile = () => {
         }
         CheckLoggedIn()
     }, [])
-    console.log(user)
 
     const handlePasswordSubmit = async (e) => {
-        e.preventDefault();
-        const response = await api.put(`/users/${user.id}/change-password`, newPassword, {
+        //e.preventDefault();
+        const newPayload = { "id": user.id, "username": user.username, "old_password": newPassword.oldPassword, "new_password": newPassword.newPassword }
+        const response = await api.put(`/users/${user.id}/change-password`, newPayload, {
             withCredentials: true
         });
-        console.log(response.data)
+        showToast("Password updated", "success")
         setNewPassword({
             oldPassword: "",
             newPassword: "",
@@ -63,15 +66,16 @@ const Profile = () => {
                         <div className='w-[60%] border-2 border-gray-500 bg-white p-2 rounded-md'>
                             <h3 className='text-lg font-semibold text-center mb-5'>Change Password</h3>
                             <form onSubmit={handlePasswordSubmit} className='gap-2 mx-auto flex flex-col'>
-                                <Input type="password" placeholder='Enter New Password' value={newPassword.password} onChange={() => setNewPassword(e.target.value)} />
-                                <Input type="password" placeholder='Validate Password' value={newPassword.validatePassword} onChange={() => setNewPassword(e.target.value)} />
+                                <Input type="password" placeholder='Old Password' value={newPassword.oldPassword} onChange={(e) => setNewPassword({ ...newPassword, oldPassword: e.target.value })} />
+                                <Input type="password" placeholder='Enter New Password' value={newPassword.newPassword} onChange={(e) => setNewPassword({ ...newPassword, newPassword: e.target.value })} />
+                                <Input type="password" placeholder='Validate Password' value={newPassword.validateNewPassword} onChange={(e) => setNewPassword({ ...newPassword, validateNewPassword: e.target.value })} />
                                 <Button text='Change your password' />
                             </form>
                         </div>
                     </div>
 
-                    <div className='flex flex-col m-2'>
-                        <h3 className='text-xl font-bold text-center'>Your orders</h3>
+                    <div className='flex flex-col m-2 mt-8'>
+                        <h3 className='text-2xl font-bold text-center'>Your orders</h3>
                         <p className='text-center'>Total Orders: {user.orders.length}</p>
                         <div className='mt-4 flex flex-row flex-wrap justify-around'>
                             {user.orders.map((order, index) => {

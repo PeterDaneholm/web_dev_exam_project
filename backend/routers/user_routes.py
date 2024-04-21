@@ -76,6 +76,7 @@ class OrderResponse(OrderBase):
 class UsersMeResponse(BaseModel):
     id: str
     username: str
+    password: str
     email_address: str
     first_name: str
     last_name: str
@@ -96,21 +97,6 @@ class UpdateUserPassword(BaseModel):
     username: str = None
     old_password: str = None
     new_password: str = None
-
-class UpdateProduct(ProductBase):
-    id: str = None
-    name: str = None
-    price: float = None
-    description: str = None
-    on_sale: bool = None
-    size: List[ProductSize] = None
-    category_id: str = None
-    image_id: Optional[List[ProductImage]] | None
-
-class UpdateSize(BaseModel):
-    id: str = None
-    size: str = None
-    quantity: int = None
 
 
 router = APIRouter(tags=["Users"])
@@ -203,6 +189,7 @@ async def change_password(user_id: str,
                           data: UpdateUserPassword, 
                           db: db_dependency,
                           current_user: Annotated[UserBase, Security(get_current_user)]):
+    print(data)
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")

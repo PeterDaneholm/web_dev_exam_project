@@ -9,7 +9,7 @@ const ProfileDropdown = ({ user, role }) => {
             <Link to={`/profile/${user}`}>
                 Profile
             </Link>
-            {role === "admin" ?
+            {role === "Admin" ?
                 <Link to={'/admin'}>
                     Admin
                 </Link>
