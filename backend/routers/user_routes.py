@@ -113,7 +113,7 @@ class UpdateSize(BaseModel):
     quantity: int = None
 
 
-router = APIRouter()
+router = APIRouter(tags=["Users"])
 
 
 #Create user

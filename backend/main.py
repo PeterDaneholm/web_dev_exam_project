@@ -1,7 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends, status, Security, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from fastapi import APIRouter
 from typing import Annotated, List, Optional
 from sqlalchemy.orm import Session, joinedload
 from pydantic import BaseModel
@@ -13,12 +12,14 @@ import models
 from auth import get_current_user, verify_password, authenticate_user, create_access_token, Token, oath2_scheme
 from database import db_dependency, get_db
 from passlib.context import CryptContext
-from dotenv import load_dotenv
 import os
 from routers.user_routes import router as user_router
+from routers.product_routes import router as product_router
+
 
 app = FastAPI()
-app.include_router(user_router, tags=["Users"])
+app.include_router(user_router)
+app.include_router(product_router)
 
 origins = [
     "http://localhost:5173",
@@ -141,7 +142,7 @@ class UpdateSize(BaseModel):
 #ROUTES
 
 #LOGIN
-@app.post("/login")
+@app.post("/login", tags=["Auth"])
 async def create_access_token_from_login(
                                         db: db_dependency,
                                         response: Response,
@@ -162,7 +163,7 @@ async def create_access_token_from_login(
 
 
 #LOGOUT
-@app.post("/logout")
+@app.post("/logout", tags=["Auth"])
 async def logout(response: Response ):
     #response.delete_cookie("access_token")
     response.set_cookie(key="access_token", value="", httponly=True, expires=timedelta(seconds=1))
@@ -170,7 +171,7 @@ async def logout(response: Response ):
     return {"status": "success"}
 
 
-@app.get("/checktoken")
+@app.get("/checktoken", tags=["Auth"])
 async def check_token(current_user: Annotated[UserBase, Depends(get_current_user)]):
     return current_user
 
@@ -187,104 +188,6 @@ async def password_reset(email: str, db: db_dependency):
 
 #PRODUCT ROUTES
 #Create Product
-@app.post("/products/", status_code=status.HTTP_201_CREATED)
-async def create_product(product: ProductBase, 
-                         db: db_dependency,
-                         ):
-    print(product)
-    product_data = product.dict(by_alias=True)
-    sizes = product_data.pop('size')
-    size_instance = [models.ProductSize(**size) for size in sizes]
-    image_urls = [image.get("url") for image in product_data.get("image_id", [])]
-    image_instance = [models.ProductImage(url=url) for url in image_urls] if image_urls else []
-
-    db.add_all(image_instance)
-    db.commit()
-    
-    product_data['image_id'] = image_instance
-    new_product = models.Product(**product_data, size=size_instance)
-    db.add(new_product)
-    db.commit()
-    return new_product
-
-
-#Get all Products
-@app.get("/products/", response_model=List[ProductBase])
-async def get_products(db: db_dependency):
-    db_products = db.query(models.Product).all()
-    if db_products is None:
-        raise HTTPException(status_code=404, detail="Products could not be found")
-        
-    return db_products
-
-
-#Get specific Product
-@app.get("/products/{product_id}", status_code=status.HTTP_200_OK)
-async def get_product(product_id: str, db: db_dependency):
-    db_product = db.query(models.Product)\
-        .options(joinedload(models.Product.size), 
-                 joinedload(models.Product.image_id))\
-        .filter(models.Product.id == product_id).first()
-    if db_product is None:
-        raise HTTPException(status_code=404, detail="Product not found")
-    return db_product
-
-
-#Update Product
-@app.put("/products/{product_id}", status_code=status.HTTP_200_OK)
-async def update_product(product_id: str, product: UpdateProduct, db: db_dependency):
-    db_product = db.query(models.Product).filter(models.Product.id == product_id).first()
-    if db_product is None:
-        raise HTTPException(status_code=404, detail="Product is not found")
-    
-    print(f"Product: {product} ")
-    update_data = product.dict(exclude_unset=True)
-    if 'size' in update_data:
-        del update_data['size']
-
-    if 'image_id' in update_data:
-        for image in update_data['image_id']:
-            new_image = models.ProductImage(**image)
-            db.add(new_image)
-            db_product.image_id.append(new_image)
-        del update_data['image_id']
-
-    #for field, value in product.model_dump(exclude_unset=True).items():
-    for field, value in update_data.items():
-        print(f"Field: {field}, Value: {value}")
-        setattr(db_product, field, value)
-    
-    db.commit()
-    db.refresh(db_product)
-
-    return db_product
-
-#Update Product quantities
-@app.put("/productquantity/{product_id}", status_code=status.HTTP_200_OK)
-async def update_quantity(product_size: List[UpdateSize],
-                          db: db_dependency,
-                          ):
-    for product in product_size:
-        db_product_size = db.query(models.ProductSize).filter(models.ProductSize.id == product.id).first()
-        if db_product_size is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found")
-        for field, value in product.model_dump(exclude_unset=True).items():
-            setattr(db_product_size, field, value)
-    
-        db.commit()
-        db.refresh(db_product_size)
-    return {"message": "Sizes updated correctly"}
-
-
-#Delete Product
-@app.delete("/products/{product_id}", status_code=status.HTTP_200_OK)
-async def delete_product(product_id: str, db: db_dependency):
-    db_product = db.query(models.Product).filter(models.Product.id == product_id).first()
-    if db_product is None:
-        raise HTTPException(status_code=404, detail="Product not found")
-    
-    db.delete(db_product)
-    db.commit()
 
 
 #ORDER ROUTES

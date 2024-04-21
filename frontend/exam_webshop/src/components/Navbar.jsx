@@ -74,7 +74,7 @@ const Navbar = () => {
                         </button>
                         {profileOpen ?
                             <div className='absolute right-0 top-full w-20 h-auto rounded-md bg-contrast'>
-                                <ProfileDropdown user={user.username} />
+                                <ProfileDropdown user={user.username} role={user.role} />
                             </div>
                             :
                             ''}
