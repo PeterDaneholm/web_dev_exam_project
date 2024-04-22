@@ -36,7 +36,6 @@ const Admin = () => {
                 withCredentials: true,
 
             })
-            //console.log(response)
             setUsers(response.data)
         }
         const getOrders = async () => {
@@ -57,6 +56,7 @@ const Admin = () => {
         getProducts()
 
     }, [])
+    console.log(orders)
 
     function isActive(page) {
         return activeSubPage === page ? "bg-contrastdark w-full " : ""
@@ -145,12 +145,21 @@ function Orders({ content }) {
     return <div className='overflow-auto max-h-full'>
         <h3 className='text-xl font-semibold'>All Orders</h3>
         {content.map(item => (
-            <div key={item.id} className='border-2 rounded-md m-2 p-2 w-auto bg-white border-gray-600 shadow-sm '>
-                <h4>Ordered by: {item.customer.username}</h4>
-                <h4>First name: {item.customer.first_name}, Last name: {item.customer.last_name}</h4>
-                <h4>Ordered on: {item.order_date}</h4>
-                <h4> Order total: {item.total} EUR</h4>
-
+            <div key={item.id} className='border-2 rounded-md m-2 p-2 w-auto bg-white border-gray-600 shadow-sm flex flex-row justify-around'>
+                <div className='flex flex-col'>
+                    <h4>Ordered by: {item.customer.username}</h4>
+                    <h4>First name: {item.customer.first_name}, Last name: {item.customer.last_name}</h4>
+                    <h4>Ordered on: {item.order_date}</h4>
+                    <h4> Order total: {item.total} EUR</h4>
+                </div>
+                <div>
+                    {item.products.map((product) =>
+                        <div className={product.id}>
+                            <p>Products in order:</p>
+                            <p>{product.name}</p>
+                            <p>{product.price} EUR</p>
+                        </div>)}
+                </div>
             </div>
         ))}
     </div>

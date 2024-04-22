@@ -11,7 +11,7 @@ async function GetUser() {
 export async function onAdminRouteLoad(navigate) {
     try {
         const user = await GetUser();
-        console.log(user)
+        //console.log(user)
 
         if (user.role === "Admin") {
             return null
