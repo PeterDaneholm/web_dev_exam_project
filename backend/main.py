@@ -80,11 +80,3 @@ async def logout(response: Response ):
 async def check_token(current_user: Annotated[UserBase, Depends(get_current_user)]):
     return current_user
 
-@app.post("/password-reset/{email}")
-async def password_reset(email: str, db: db_dependency):
-    user = db.query(models.User).filter(models.User.email_address == email).first()
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    password_reset_token = jwt.encode({"sub": user.username, "exp": datetime + timedelta(minutes=15)}, SECRET_KEY, algorithm=ALGORITHM)
-    return {"message": "Password reset email sent"}
-
