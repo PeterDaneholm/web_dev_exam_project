@@ -70,6 +70,7 @@ const AdminProduct = () => {
                 }
             })
         }
+        console.log(formData)
         //console.log("Product data to request", formData)
         const response = await api.post("/products", formData, {
             withCredentials: true,
@@ -94,7 +95,15 @@ const AdminProduct = () => {
                 <Input type='text' name='price' onChange={handleChange} value={newProduct.price} placeholder='Price' />
 
                 <label htmlFor="category_id">Category of Product</label>
-                <Input type='text' name='category_id' onChange={handleChange} value={newProduct.category_id} placeholder='Select Category' />
+                <select name="category_id" id="category_id" onChange={handleChange}>
+                    <option value="baseball">Baseball</option>
+                    <option value="jacket">Jacket</option>
+                    <option value="suit">Suit</option>
+                    <option value="sportclothes">Sportclothes</option>
+                    <option value="shoes">Shoes</option>
+                    <option value="accessories">Accessories</option>
+                    <option value="sportequipment">Sportequipment</option>
+                </select>
 
                 <label htmlFor="size">Size of Product</label>
                 <Input type='text' name='size' onChange={handleSizeChange} value={size.size} placeholder='Add Sizes' />
