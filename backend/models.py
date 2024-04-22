@@ -14,20 +14,12 @@ class CategoryEnum(PythonEnum):
     ACCESORIES = 'accessories'
     SPORTEQUIPMENT = 'sportequipment'
 
-#association table between orders and users
-#class OrderProducts(Base):
-#    __tablename__ = "orderproducts"
-#    products = Column(VARCHAR(36), ForeignKey('products.id'), primary_key=True)
-#    orders = Column(VARCHAR(36), ForeignKey('orders.id'), primary_key=True)
-
-
 class ProductSize(Base):
     __tablename__ = "productsize"
     id = Column(VARCHAR(36), primary_key=True, default=uuid.uuid4, index=True)
     size = Column(String(10), index=True)
     quantity = Column(Integer)
     product_id = Column(VARCHAR(36), ForeignKey('products.id'))
-
 
 class User(Base):
     __tablename__ = 'users'
@@ -50,7 +42,6 @@ class Product(Base):
     description = Column(String(400))
     on_sale = Column(Boolean, default=False)
     category_id = Column(Enum(CategoryEnum), nullable=False)
-    #user_rating = (Float(1))
     image_id = relationship('ProductImage', backref='products')
     size = relationship('ProductSize', backref='productsize')
     reviews = relationship('Review', backref='reviews')
