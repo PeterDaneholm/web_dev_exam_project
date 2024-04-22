@@ -35,7 +35,7 @@ const Searchbar = () => {
             {search.length == 0 ? '' :
                 <div className='bg-slate-200 bg-opacity-90 absolute w-4/5 border-black border-2 rounded-lg p-3 right-[10%] flex flex-col'>
                     {filterSearch.map(prod => {
-                        return <Link key={prod.id} to={`/shop/${prod.id}`}>{prod.name}</Link>
+                        return <Link key={prod.id} to={`/shop/${prod.id}`} className='hover:bg-primary rounded-md p-2 ml-3'>{prod.name}</Link>
                     })}
                 </div>
             }

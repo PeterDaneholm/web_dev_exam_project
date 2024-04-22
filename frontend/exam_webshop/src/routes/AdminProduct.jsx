@@ -70,12 +70,10 @@ const AdminProduct = () => {
                 }
             })
         }
-        console.log(formData)
-        //console.log("Product data to request", formData)
         const response = await api.post("/products", formData, {
             withCredentials: true,
         })
-        //console.log("Response: ", response)
+        showToast("Product added!", "success")
         navigate("/admin")
     }
 
@@ -95,7 +93,8 @@ const AdminProduct = () => {
                 <Input type='text' name='price' onChange={handleChange} value={newProduct.price} placeholder='Price' />
 
                 <label htmlFor="category_id">Category of Product</label>
-                <select name="category_id" id="category_id" onChange={handleChange}>
+                <select name="category_id" id="category_id" onChange={handleChange}
+                    className='rounded-md h-[30px] w-[70%] mx-auto text-center shadow-md'>
                     <option value="baseball">Baseball</option>
                     <option value="jacket">Jacket</option>
                     <option value="suit">Suit</option>
@@ -110,6 +109,17 @@ const AdminProduct = () => {
 
                 <label htmlFor="quantity">Quantity of Product</label>
                 <Input type='number' name='quantity' onChange={handleSizeChange} value={size.quantity} />
+
+                <h4>Added Sizes:</h4>
+                <div className='flex flex-row justify-around'>
+                    {newProduct.size && newProduct.size.map((size, index) => {
+                        return <div key={index} className='rounded-md bg-gray-100 border-gray-500 border-2 w-[120px] h-[52px]'>
+                            <p>Size: {size.size}</p>
+                            <p>Quantity: {size.quantity}</p>
+                        </div>
+                    }
+                    )}
+                </div>
 
                 <label htmlFor='image'>Add Images below</label>
                 {newProduct.image_id.map((item, index) => (
