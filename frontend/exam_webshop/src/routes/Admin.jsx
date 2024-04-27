@@ -57,7 +57,6 @@ const Admin = () => {
 
     }, [])
 
-
     function isActive(page) {
         return activeSubPage === page ? "bg-contrastdark w-full " : ""
     }
@@ -134,7 +133,6 @@ function Users({ content }) {
                     <p>Username: {item.username}</p>
                     <p>First Name: {item.first_name}, Last Name: {item.last_name}</p>
                     <p>Email address: {item.email_address}</p>
-
                 </div>
             ))}
         </div>

@@ -1,5 +1,5 @@
-from fastapi import APIRouter, status, HTTPException, Depends, Request, Security
-from auth import get_current_user, get_user, verify_password
+from fastapi import APIRouter, status, HTTPException, Depends, Request, Security, Response
+from auth import get_current_user, get_user, verify_password, create_access_token
 from database import db_dependency
 from pydantic import BaseModel
 from datetime import date, timedelta, datetime
@@ -104,7 +104,7 @@ router = APIRouter(tags=["Users"])
 
 #Create user
 @router.post("/register/", status_code=status.HTTP_201_CREATED)
-async def create_user(user: UserBase, db: db_dependency):
+async def create_user(user: UserBase, response: Response, db: db_dependency):
     existing_user = db.query(models.User).filter(models.User.username == user.username).first()
     if existing_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already exists")
@@ -114,6 +114,14 @@ async def create_user(user: UserBase, db: db_dependency):
     db_user = models.User(**user_dict)
     db.add(db_user)
     db.commit()
+    access_token_expires = timedelta(minutes=60)
+    access_token = create_access_token(data={"sub": db_user.username, "scopes": [db_user.role]}, expires_delta=access_token_expires)
+    response.set_cookie(key="access_token", 
+                        value=f"Bearer {access_token}", 
+                        httponly=True,
+                        samesite='None'
+                        )
+    print(response.headers)
     return db_user
 
 #Authentication route for checking user is logged in
@@ -144,13 +152,6 @@ async def get_users(db:db_dependency,
             .filter(models.User.role == 'user').all()
         if db_users is None:
             raise HTTPException(status_code=404, detail="Users could not be found")
-        
-        users_without_password = []
-        for user in db_users:
-            user_dict = user.__dict__
-            user_dict.pop('_sa_instance_state', None) #Is this necessary? Included for now until tested
-            user_dict.pop('password', None)
-            users_without_password.routerend(user_dict)
 
         return db_users
     except Exception as e:

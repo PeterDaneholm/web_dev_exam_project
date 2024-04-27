@@ -49,7 +49,7 @@ const Navbar = () => {
                     Stuff n' Things</h1>
             </Link>
 
-            {user.username !== "" ?
+            {user.username !== undefined ?
                 <div className='flex flex-row justify-evenly w-[30%] float-end items-center'>
                     <div className='relative inline-block'>
                         <button onClick={() => setProductCartOpen(!productCartOpen)}
@@ -81,9 +81,11 @@ const Navbar = () => {
                     </div>
                 </div>
                 :
-                <div>
-                    <Link to={"/signup"}>Sign Up</Link>
-                    <Link to={"/login"}>Log In</Link>
+                <div className='pt-7 pr-4'>
+                    <Link className="bg-contrastdark p-2 rounded-lg hover:bg-contrast hover:cursor-pointer mt-8 mr-2 shadow-md"
+                        to={"/signup"}>Sign Up</Link>
+                    <Link className="bg-contrastdark p-2 rounded-lg hover:bg-contrast hover:cursor-pointer mt-5 mr-2 shadow-md"
+                        to={"/login"}>Log In</Link>
                 </div>
             }
         </div>

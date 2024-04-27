@@ -2,7 +2,7 @@ import React from 'react'
 import api from '../../api'
 import { useState, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Input from '../basicelements/Input'
 import Button from '../basicelements/Button'
 import { useToast } from '../Toast/ToastContext'
@@ -19,6 +19,7 @@ const SignUpForm = () => {
     role: 'user',
   })
   const { showToast } = useToast()
+  const navigate = useNavigate()
 
   const handleChange = async (e) => {
     setFormData((prev) => {
@@ -40,6 +41,7 @@ const SignUpForm = () => {
       email_address: '',
       password: '',
     })
+    navigate("/shop")
     showToast(`User: ${formData.username} created`, "success")
   }
 
