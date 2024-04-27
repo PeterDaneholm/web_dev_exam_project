@@ -5,6 +5,7 @@ import Button from '../components/basicelements/Button'
 import Input from '../components/basicelements/Input'
 import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
+import { useToast } from '../components/Toast/ToastContext'
 
 
 const AdminEdit = () => {
@@ -12,6 +13,7 @@ const AdminEdit = () => {
     const [product, setProduct] = useState()
     const [updatedQuantities, setUpdatedQuantities] = useState([])
     const navigate = useNavigate()
+    const { showToast } = useToast()
 
     useEffect(() => {
         const getProduct = async () => {
@@ -32,19 +34,17 @@ const AdminEdit = () => {
                 return item;
             }
         }))
-        console.log(updatedQuantities)
     }
 
 
     const SubmitUpdate = async (e) => {
         e.preventDefault()
-        console.log(updatedQuantities)
         const response = await api.put(`/productquantity/${id}`, updatedQuantities, {
             withCredentials: true
         })
         console.log(response)
         if (response.status == 200) {
-            console.log("Sizes updated")
+            showToast("Sizes updated!", "success")
             navigate("/admin")
         }
     }
