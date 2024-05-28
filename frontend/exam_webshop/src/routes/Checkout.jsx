@@ -63,7 +63,7 @@ const Checkout = () => {
     }
 
     return (
-        <div>
+        <div className='flex flex-col justify-center'>
             {cart.length === 0 ?
                 <div>
                     You cannot buy anything if there's nothing in your cart :/
@@ -71,7 +71,7 @@ const Checkout = () => {
                 :
                 <div>
                     <h2 className='text-lg font-semibold text-center m-2'>In your Shopping Cart</h2>
-                    <div className='flex flex-row flex-wrap'>
+                    <div className='flex flex-row flex-wrap justify-center mb-5'>
                         {cart.map((item) => <>
                             <div key={item.id} className='h-1/4 m-2 border-2 rounded-md px-2 w-[280px]'>
                                 <h3 className='text-lg'>{item.name}</h3>
@@ -90,7 +90,8 @@ const Checkout = () => {
 
                     <CheckOutModal readyToOrder={readyToOrder} setReadyToOrder={setReadyToOrder} />
 
-                    {readyToOrder && <Button text='Make the Order!' onClick={handleSubmit} my='my-8 mx-[16%]' width='w-2/3' />}
+                    {readyToOrder &&
+                        <Button text='Make the Order!' onClick={handleSubmit} my='my-8 ml-[16%]' width='w-2/3' />}
                 </div>
             }
 

@@ -1,3 +1,5 @@
+#Source for this particular code: https://github.com/tiangolo/fastapi/issues/480
+
 from fastapi.security import OAuth2
 from fastapi.openapi.models import OAuthFlow as OAuthFlowsModel
 from fastapi import Request, HTTPException, status

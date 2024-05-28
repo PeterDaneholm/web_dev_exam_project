@@ -37,19 +37,19 @@ const CheckOutModal = ({ readyToOrder, setReadyToOrder }) => {
     }
 
     return (
-        <div className='w-3/4 h-3/4 rounded-md shadow-lg mx-auto p-2 bg-contrastdark'>
+        <div className='w-3/4 h-3/4 rounded-md shadow-lg mx-auto p-2 bg-gray-300'>
             {currentCheckout === 'delivery' ?
-                <>
+                <div className='flex flex-col justify-center'>
                     <CheckoutDelivery delivery={delivery} setDelivery={setDelivery} />
-                    <button onClick={changeLayout}>Payment</button>
-                </>
+                    <Button onClick={changeLayout} text='Payment' my='mx-auto' width='w-2/3' />
+                </div>
                 :
-                <>
+                <div className='flex flex-col justify-center'>
                     <CheckoutPayment payment={payment} setPayment={setPayment} />
-                    <button onClick={changeLayout}>Delivery</button>
-                </>
+                    <Button onClick={changeLayout} text='Delivery' my='mx-auto' width='w-2/3' />
+                </div>
             }
-            <Button text='Set Info' width='w-[30%]' onClick={handleCheckOut} />
+            <Button text='Set Info' width='w-[30%]' my='block' onClick={handleCheckOut} />
 
         </div>
     )
