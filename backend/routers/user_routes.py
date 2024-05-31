@@ -130,7 +130,7 @@ async def read_current_user(user: UserBase = Depends(get_current_user)):
     return user
 
 #Get all users
-@router.get("/users/", response_model=List[UserResponse])
+@router.get("/users/")
 async def get_users(db:db_dependency, 
                     request: Request,
                     current_user: Annotated[UserBase, Security(get_current_user, scopes=["Admin"])]
